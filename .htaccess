@@ -1,0 +1,5 @@
+RewriteEngine On
+
+# Verwijs alle andere verzoeken naar public/index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ /index.php [L]
