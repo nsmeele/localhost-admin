@@ -1,0 +1,34 @@
+#sidebar {
+  width: 100%;
+  max-width: 250px;
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  ul li {
+    padding: .5rem 0;
+
+    &.active > a,
+    &:hover > a {
+      color: $yellow;
+    }
+
+  }
+
+
+  ul ul {
+    padding-left: .75rem;
+
+    li {
+      padding: 0.25rem 0;
+
+      a {
+        color: rgba($white, 0.5);
+      }
+    }
+  }
+
+}

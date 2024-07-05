@@ -1,12 +1,9 @@
-<h1>Dashboard</h1>
-
 <p>
-    <a href="index.php?p=projects" class="btn btn-outline-primary"><span class="icon mr-2"><i class="fas fa-folder"></i></span>Bekijk
-        alle lokale projecten
+    <a href="<?php echo $navigation->getItemByUri('/projects')?->url; ?>" class="btn btn-outline-primary">
+        <span class="icon me-2"><i class="fa-solid fa-folder"></i></span>Bekijk alle lokale projecten
     </a>
     Of
-    <a
-            href="index.php?p=projects&subpage=admin" class="btn btn-primary">
-        <span class="icon mr-2"><i class="fas fa-folder-plus"></i></span>Maak een nieuw project aan
+    <a href="<?php echo $navigation->getItemByUri('/projects/admin')?->url; ?>" class="btn btn-primary">
+        <span class="icon me-2"><i class="fa-solid fa-folder-plus"></i></span>Maak een nieuw project aan
     </a>
 </p>

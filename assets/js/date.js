@@ -73,13 +73,8 @@ function updateDate() {
 
 }
 
+updateClock();
+updateDate();
 
-$(document).ready(function ($) {
-
-    updateClock();
-    updateDate();
-
-    setClock = setInterval(updateClock, 1000);
-    setDate = setInterval(updateDate, 1000 * 60)
-
-})
+setClock = setInterval(updateClock, 1000);
+setDate = setInterval(updateDate, 1000 * 60)

@@ -1,43 +1,43 @@
 <!DOCTYPE html>
-<html>
+<html class="h-100">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.1.1.min.js"></script>
-    <link href="/assets/css/style.min.css" rel="stylesheet">
+    <link href="<?php echo HOME_URL; ?>/assets/css/main.css" rel="stylesheet">
 
     <title>My Localhost Admin</title>
 
 </head>
 <body>
 
-<div id="page-wrapper">
-    <div class="nav-bg bg-dark">
+<div id="page-wrapper" class="d-flex flex-nowrap flex-grow-1 min-vh-100">
+    <div id="sidebar" class="bg-dark text-white px-4 pt-4 d-flex flex-column position-relative">
 
-        <div class="real-time">
-            <!-- <i class="fa fa-calendar" aria-hidden="true"></i> -->
+        <div class="inner">
+            <div class="h5">Menu</div>
+            <nav>
+                <?php
+                echo new Service\MenuService($navigation, false);
+                ?>
+            </nav>
+
+        </div>
+
+        <div class="real-time mt-lg-auto position-sticky sticky-bottom py-4 border-top">
+             <i class="fa-solid fa-calendar-alt" aria-hidden="true"></i>
             <span id="date">&nbsp;</span><br>
             <span id="clock">&nbsp;</span>
         </div>
 
     </div>
-    <nav>
-        <?php
-        require_once 'nav.php';
-        ?>
-    </nav>
 
-    <main>
+    <main class="w-100 p-4">
 
-        <article>
+        <div class="container">
 
             <?php
-            echo getBreadcrumbMenu();
+            $breadcrumb = new \Service\BreadcrumbService($currentNavigationItem);
+            echo $breadcrumb;
             ?>
 
-            <div class="entry-main">
-                <div class="entry-header">
-                    <div class="entry-title">
-                    </div>
-                </div>
-                <div class="entry-content">
+            <h1><?php echo $currentNavigationItem->getLabel(); ?></h1>

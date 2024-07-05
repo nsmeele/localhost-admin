@@ -1,4 +1,5 @@
 <?php
+
 $indicesServer = array (
     'PHP_SELF',
     'argv',
@@ -45,9 +46,9 @@ $indicesServer = array (
 echo '<table class="table table-hover">';
 foreach ($indicesServer as $arg) {
     if (isset($_SERVER[ $arg ])) {
-        echo '<tr><td>'.$arg.'</td><td>'.$_SERVER[ $arg ].'</td></tr>';
+        echo '<tr><td>' . $arg . '</td><td>' . $_SERVER[ $arg ] . '</td></tr>';
     } else {
-        echo '<tr><td>'.$arg.'</td><td>-</td></tr>';
+        echo '<tr><td>' . $arg . '</td><td>-</td></tr>';
     }
 }
 echo '</table>';
