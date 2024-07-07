@@ -2,10 +2,13 @@
 
 use Service\NavigationService;
 
-define("ROOT_PATH", dirname(__FILE__));
-define("HOME_URL", (empty($_SERVER[ 'HTTPS' ]) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]/localhost-admin");
-
 require_once 'vendor/autoload.php';
+
+define("ROOT_PATH", dirname(__FILE__));
+
+$request = \Service\RequestService::getInstance();
+
+define("HOME_URL", $request->getHomeUrl());
 
 $basePath              = realpath(ROOT_PATH . '/pages');
 $navLabels             = [];
@@ -18,16 +21,16 @@ try {
     $navigation->getItemByUri('/server-info')->icon = 'battery-three-quarters fa-fw';
 
     $navigation->setNavLabels([
-        '/projects' => 'Projects',
-        '/server-info' => 'Server Info',
+        '/projects'          => 'Projects',
+        '/server-info'       => 'Server Info',
         '/projects/overview' => 'Admin',
-        '/projects/edit' => 'Edit Project',
-        '/projects/new' => 'New Project',
+        '/projects/edit'     => 'Edit Project',
+        '/projects/new'      => 'New Project',
     ]);
 
     require_once 'layout/header.php';
 
-    if (file_exists($currentNavigationItem->path)) {
+    if ($currentNavigationItem && file_exists($currentNavigationItem->path)) {
         require_once $currentNavigationItem->path;
     }
 } catch (\Throwable $exception) {

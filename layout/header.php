@@ -36,8 +36,11 @@
         <div class="container">
 
             <?php
-            $breadcrumb = new \Service\BreadcrumbService($currentNavigationItem);
-            echo $breadcrumb;
-            ?>
+            if ($currentNavigationItem) {
+                $breadcrumb = new \Service\BreadcrumbService($currentNavigationItem);
+                echo $breadcrumb;
 
-            <h1><?php echo $currentNavigationItem->getLabel(); ?></h1>
+                ?>
+                <h1><?php echo $currentNavigationItem->getLabel(); ?></h1>
+                <?php
+            }
