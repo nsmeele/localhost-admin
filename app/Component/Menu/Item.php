@@ -19,6 +19,9 @@ final class Item
         $this->menuLabel = $title;
     }
 
+    /**
+     * @return Item[]
+     */
     public function getParents(): array
     {
         $parents = [];

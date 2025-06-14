@@ -22,7 +22,7 @@ final readonly class Renderer implements \Stringable
         $navItemHtml = sprintf(
             '<a href="%s" class="%s">%s%s</a>',
             $navItem->url,
-            join(' ', ['flex']),
+            'flex',
             (! empty($navItem->icon) ? '<span class="mr-1"><i class="fa-solid fa-fw fa-' . $navItem->icon . '"></i></span>' : ''),
             $navItem->title
         );

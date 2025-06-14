@@ -11,7 +11,7 @@ enum ProjectType : string
     case SYMFONY_7 = 'symfony-7';
     case SYMFONY_LTS = 'symfony-lts';
     case NEXTJS = 'nextjs';
-    case REACTJS = 'reactjs';
+    case REACT = 'react';
     case DRUPAL = 'drupal';
     case DRUPAL_CMS = 'drupal-cms';
     case WORDPRESS = 'wordpress';
@@ -22,10 +22,10 @@ enum ProjectType : string
             self::SYMFONY_7 => 'Symfony 7 + ViteJS + TailwindCSS',
             self::SYMFONY_LTS => 'Symfony LTS + ViteJS + TailwindCSS',
             self::NEXTJS => 'NextJS + TailwindCSS',
-            self::REACTJS => 'ReactJS + TailwindCSS',
+            self::REACT => 'ReactJS + TailwindCSS',
             self::DRUPAL => 'Drupal',
-            self::DRUPAL_CMS => 'DrupalCMS',
-            self::WORDPRESS => 'Wordpress',
+            self::DRUPAL_CMS => 'Drupal CMS',
+            self::WORDPRESS => 'WordPress',
             self::EMPTY_DIRECTORY => 'Empty directory',
             self::EMPTY_FILE => 'Empty file',
             self::SYMFONY_6 => 'Symfony 6 + ViteJS + TailwindCSS',
