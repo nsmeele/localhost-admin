@@ -9,15 +9,13 @@ use Utility\StringUtility;
 
 class EmptyDirectoryStrategy implements StrategyInterface
 {
-
-
     public function handle(
         string $projectName,
         string $targetDirectory,
-    ) : Project {
+    ): Project {
         $fileSystem      = new Filesystem();
         $projectSafeName = strtolower(StringUtility::replaceWithUnderscore($projectName));
-        $projectPath     = $targetDirectory.'/'.$projectSafeName;
+        $projectPath     = $targetDirectory . '/' . $projectSafeName;
 
         if ($fileSystem->exists($projectPath)) {
             throw new \RuntimeException(
@@ -28,7 +26,9 @@ class EmptyDirectoryStrategy implements StrategyInterface
         $fileSystem->mkdir($projectPath, 0755);
 
         return new Project(
-            strategy: $this, path: $projectPath, name: $projectName,
+            strategy: $this,
+            path: $projectPath,
+            name: $projectName,
         );
     }
 }

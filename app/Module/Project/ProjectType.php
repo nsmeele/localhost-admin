@@ -4,7 +4,6 @@ namespace Module\Project;
 
 enum ProjectType : string
 {
-
     case EMPTY_DIRECTORY = 'empty-directory';
     case EMPTY_FILE = 'empty-file';
     case SYMFONY_6 = 'symfony-6';
@@ -41,5 +40,4 @@ enum ProjectType : string
             []
         );
     }
-
 }

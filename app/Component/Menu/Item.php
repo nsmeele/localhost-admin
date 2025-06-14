@@ -4,7 +4,6 @@ namespace Component\Menu;
 
 final class Item
 {
-
     private(set) string $menuLabel;
 
     public function __construct(
@@ -20,7 +19,7 @@ final class Item
         $this->menuLabel = $title;
     }
 
-    public function getParents() : array
+    public function getParents(): array
     {
         $parents = [];
         $parent  = $this->parent;
@@ -38,18 +37,16 @@ final class Item
         return $parents;
     }
 
-    public function setIcon(string $icon) : Item
+    public function setIcon(string $icon): Item
     {
         $this->icon = $icon;
         return $this;
     }
 
-    public function setTitle(string $title) : Item
+    public function setTitle(string $title): Item
     {
         $this->title     = $title;
         $this->menuLabel = $title;
         return $this;
     }
-
-
 }

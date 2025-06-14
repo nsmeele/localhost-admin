@@ -4,8 +4,7 @@ namespace Module\Project;
 
 final readonly class Resolver
 {
-
-    public static function fromType(ProjectType $projectType) : StrategyInterface
+    public static function fromType(ProjectType $projectType): StrategyInterface
     {
         return match ($projectType) {
             ProjectType::EMPTY_DIRECTORY => new Strategy\EmptyDirectoryStrategy(),
@@ -14,5 +13,4 @@ final readonly class Resolver
             ),
         };
     }
-
 }

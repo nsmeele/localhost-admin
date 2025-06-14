@@ -1,4 +1,5 @@
 <?php
+
 use Module\Project\Resolver;
 
 global $request;
@@ -14,7 +15,7 @@ if (!empty($request->get('create-form'))) {
         try {
             $projectTypeHandler = Resolver::fromType($projectType);
             $projectTypeHandler->handle($projectName, $projectService->getProjectPath());
-            $formError = '<div class="bg-emerald-300 rounded p-3">Project \''.$projectName.'\' created successfully!</div>';
+            $formError = '<div class="bg-emerald-300 rounded p-3">Project \'' . $projectName . '\' created successfully!</div>';
         } catch (\Exception $e) {
             $formError = '<div class="bg-red-300 rounded p-3">Error creating project: ' . htmlspecialchars($e->getMessage()) . "</div>";
         }
