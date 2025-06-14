@@ -6,11 +6,16 @@ final readonly class Resolver
 {
     public static function fromType(ProjectType $projectType): StrategyInterface
     {
-        return match ($projectType) {
+        $supportedTypes = [
             ProjectType::EMPTY_DIRECTORY => new Strategy\EmptyDirectoryStrategy(),
-            default => throw new \InvalidArgumentException(
-                sprintf('Project type "%s" is not supported.', $projectType->value)
-            ),
-        };
+        ];
+
+        return $supportedTypes[$projectType] ?? throw new \InvalidArgumentException(
+            sprintf(
+                'Project type "%s" is not supported. Supported types are: %s.',
+                $projectType->value,
+                implode(', ', array_keys($supportedTypes))
+            )
+        );
     }
 }
