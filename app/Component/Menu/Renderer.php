@@ -1,41 +1,38 @@
 <?php
 
-namespace Component;
+namespace Component\Menu;
 
-use Component\Navigation\MenuItem;
 use Service\NavigationService;
-use Service\RequestService;
 
-final readonly class MenuComponent implements \Stringable
+final readonly class Renderer implements \Stringable
 {
-
     private NavigationService $navigationService;
 
-    public function __construct(
-    ) {
+    public function __construct()
+    {
         global $navigation;
         $this->navigationService = $navigation;
     }
 
     private function fetchLevelItem(
-        MenuItem $navItem,
+        Item $navItem,
         bool $recursive = true,
         int $depth = 0,
-    ) : string {
+    ): string {
         $navItemHtml = sprintf(
             '<a href="%s" class="%s">%s%s</a>',
             $navItem->url,
             join(' ', ['flex']),
-            (! empty($navItem->icon) ? '<span class="ms-1"><i class="fa-solid fa-'.$navItem->icon.'"></i></span>' : ''),
+            (! empty($navItem->icon) ? '<span class="mr-1"><i class="fa-solid fa-fw fa-' . $navItem->icon . '"></i></span>' : ''),
             $navItem->title
         );
 
-        $navItemClass = ['nav-item'];
+        $navItemClass = [];
 
         global $request;
 
         if (strpos($request->getRequestUri(), $navItem->uri) !== false) {
-            $navItemClass[] = 'text-orange-500';
+            $navItemClass[] = 'active';
         }
 
         $childrenHtml = '';
@@ -47,7 +44,7 @@ final readonly class MenuComponent implements \Stringable
         return sprintf(
             '<li class="%s">%s</li>',
             join(' ', $navItemClass),
-            $navItemHtml.$childrenHtml
+            $navItemHtml . $childrenHtml
         );
     }
 
@@ -56,7 +53,7 @@ final readonly class MenuComponent implements \Stringable
         bool $recursive = true,
         int $depth = 0,
         bool $wrap = true
-    ) : string {
+    ): string {
         $html = '';
 
         if (empty($navItems)) {
@@ -74,12 +71,12 @@ final readonly class MenuComponent implements \Stringable
         return $html;
     }
 
-    private function getContainerFormat() : string
+    private function getContainerFormat(): string
     {
         return '<ul data-depth="%d">%s</ul>';
     }
 
-    public function __toString() : string
+    public function __toString(): string
     {
         $html = $this->fetchLevel(
             $this->navigationService->getItems(),

@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@import "flowbite/src/themes/default";
+@plugin "flowbite/plugin";
+
 
 .breadcrumb {
     @apply bg-gray-100 text-gray-700 p-4 rounded-lg flex mb-6;
@@ -13,6 +16,25 @@
         }
     }
 
+}
+
+nav {
+    li {
+        @apply pt-1.5;
+    }
+
+    li.active {
+        @apply text-blue-500;
+    }
+
+    ul ul {
+        @apply pl-2;
+
+        li {
+            @apply text-gray-100;
+        }
+
+    }
 }
 
 @layer components {

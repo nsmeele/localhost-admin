@@ -1,9 +1,10 @@
 {
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^6.5.2"
+    "@fortawesome/fontawesome-free": "^6.5.2",
+    "flowbite": "^3.1.2"
   },
   "scripts": {
-    "fix-php": "./vendor/bin/phpcbf --standard=PSR12 app",
+    "fix-php": "./vendor/bin/phpcbf --standard=PSR12 app templates web",
     "dev": "vite",
     "build": "vite build",
     "watch": "vite build --watch",

@@ -3,32 +3,6 @@
 
 </div>
 
-<form action="" id="create-form">
-    <div>
-        <div>
-            <div>
-                <label for="project-name">Project name</label>
-                <input type="text" id="project-name" name="project[name]">
-            </div>
-
-            <div>
-                <label for="project-type">Project type</label>
-                <select name="project[type]" id="project-type">
-                    <option value="">- Select project type -</option>
-                    <option value="symfony-7">Symfony 7 + ViteJS + TailwindCSS</option>
-                    <option value="symfony-lts">Symfony LTS + ViteJS + TailwindCSS</option>
-                    <option value="nextjs">NextJS + TailwindCSS</option>
-                    <option value="reactjs">ReactJS + TailwindCSS</option>
-                    <option value="drupal">Drupal</option>
-                    <option value="wordpress">Wordpress</option>
-                </select>
-            </div>
-        </div>
-    </div>
-
-
-</form>
-
 <form action="" id="search-form">
     <div>
         <input type="text" placeholder="Search project" aria-label="Search project" aria-describedby="button-search">
@@ -39,9 +13,7 @@
 <?php
 $projectService = new \Service\ProjectService();
 $fileSystem     = new \Symfony\Component\Filesystem\Filesystem();
-$projectPath    = ROOT_PATH.'/projects';
-$fileSystem->mkdir($projectPath);
-$projects = $projectService->getProjects(path: $projectPath, excludeFiles: true);
+$projects = $projectService->listProjects(excludeFiles: true);
 
 ?>
 
@@ -49,16 +21,15 @@ $projects = $projectService->getProjects(path: $projectPath, excludeFiles: true)
 
     <?php
 
-        foreach ($projects as $project) {
-            ?>
+    foreach ($projects as $project) {
+        ?>
 
             <div class="col">
                 <div class="border-top p-2 flex items-center">
                     <div>
-                        <h6><i class="fa-solid fa-folder"></i><?php
-                            echo $project; ?></h6>
+                        <h6 class="font-bold text-lg"><i class="fa-solid fa-folder"></i><?php echo $project; ?></h6>
                     </div>
-                    <select class="ms-auto form-select form-select-sm w-auto" name="" id="">
+                    <select class="ms-auto form-select form-select-sm w-auto" id="">
                         <option value="">Edit</option>
                         <option value="">Delete</option>
 
@@ -74,9 +45,9 @@ $projects = $projectService->getProjects(path: $projectPath, excludeFiles: true)
             </div>
 
             <?php
-        }
+    }
 
-        ?>
+    ?>
     </div>
     <?php
 

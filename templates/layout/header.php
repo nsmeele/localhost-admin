@@ -15,7 +15,7 @@
 
         <nav>
             <?php
-            echo new Component\MenuComponent();
+            echo new \Component\Menu\Renderer();
             ?>
         </nav>
 

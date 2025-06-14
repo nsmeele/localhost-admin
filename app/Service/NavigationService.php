@@ -2,19 +2,18 @@
 
 namespace Service;
 
-use Component\Navigation\MenuItem;
+use Component\Menu\Item;
 use Symfony\Component\Finder\Finder;
 
 final class NavigationService
 {
-
     /**
-     * @var MenuItem[]
+     * @var Item[]
      */
     protected array $items = array ();
 
     /**
-     * @var MenuItem[]
+     * @var Item[]
      */
     protected array $itemMap = array ();
 
@@ -26,18 +25,18 @@ final class NavigationService
     public function setFromPath(
         ?string $path = null,
         bool $recursive = true,
-    ) : NavigationService {
+    ): NavigationService {
         $this->items = $this->getItemsFromPath(null, $path, $recursive);
 
         return $this;
     }
 
     public function getItemsFromPath(
-        ?MenuItem $parent = null,
+        ?Item $parent = null,
         ?string $path = null,
         bool $recursive = true,
         int $depth = 0,
-    ) : array {
+    ): array {
         $path     = $path ?? $this->basePath;
         $basePath = $this->basePath;
 
@@ -49,12 +48,12 @@ final class NavigationService
                 continue; // Skip index.php and home.php files
             }
 
-            $subPath = $path.'/'.$file->getBasename();
+            $subPath = $path . '/' . $file->getBasename();
 
             $uri = str_replace($basePath, '', $subPath);
 
-            $navigationItem = new MenuItem(
-                url: HOME_URL.$uri,
+            $navigationItem = new Item(
+                url: HOME_URL . $uri,
                 uri: $uri,
                 title: ucfirst(strtolower($file->getBasename('.php'))),
                 path: $subPath,
@@ -78,14 +77,13 @@ final class NavigationService
         return $navItems;
     }
 
-    public function getItems() : array
+    public function getItems(): array
     {
         return $this->items;
     }
 
-    public function getItemByUri(string $uri) : ?MenuItem
+    public function getItemByUri(string $uri): ?Item
     {
         return $this->itemMap[ $uri ] ?? null;
     }
-
 }
