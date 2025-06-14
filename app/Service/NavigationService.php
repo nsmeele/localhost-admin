@@ -37,7 +37,7 @@ final class NavigationService
     public function setFromPath(
         ?string $path = null,
         bool $recursive = true,
-    ) : NavigationService {
+    ): NavigationService {
         $path                  = $path ?? $this->basePath;
         $homeNavItem           = $this->items[ 0 ];
         $homeNavItem->children = $this->getItemsFromPath($homeNavItem, $path, $recursive);
@@ -50,20 +50,19 @@ final class NavigationService
         ?string $path = null,
         bool $recursive = true,
         int $depth = 0,
-    ) : array {
+    ): array {
         $path     = $path ?? $this->basePath;
         $basePath = $this->basePath;
 
         $navItems = [];
-        $finder    = new Finder();
+        $finder   = new Finder();
 
         foreach ($finder->in($path)->depth(0) as $file) {
-
             if ($file->getBasename() === 'index.php') {
                 continue; // Skip index.php and home.php files
             }
 
-            $subPath = $path.'/'.$file->getBasename();
+            $subPath = $path . '/' . $file->getBasename();
 
             $uri = str_replace($basePath, '', $subPath);
 
@@ -76,7 +75,7 @@ final class NavigationService
             );
 
             if ($file->isDir() && $recursive) {
-                $navigationItem->path .= '/index.php';
+                $navigationItem->path     .= '/index.php';
                 $navigationItem->children = $this->getItemsFromPath(
                     $navigationItem,
                     $subPath,
@@ -94,7 +93,7 @@ final class NavigationService
         return $navItems;
     }
 
-    public function getItems(bool $includeHome = false) : array
+    public function getItems(bool $includeHome = false): array
     {
         if ($includeHome) {
             return $this->items;
@@ -103,18 +102,18 @@ final class NavigationService
         return $this->items[ 0 ]->children;
     }
 
-    public function getItemByUri(string $uri) : ?MenuItem
+    public function getItemByUri(string $uri): ?MenuItem
     {
         return $this->itemMap[ $uri ] ?? null;
     }
 
-    public function getCurrentItem() : ?MenuItem
+    public function getCurrentItem(): ?MenuItem
     {
         global $request;
         return $this->getItemByUri($request->getRequestUri());
     }
 
-    public function getRootItem() : MenuItem
+    public function getRootItem(): MenuItem
     {
         return $this->items[ 0 ];
     }

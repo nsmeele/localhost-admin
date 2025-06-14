@@ -16,7 +16,7 @@ final class MenuItem
     ) {
     }
 
-    public function getParents() : array
+    public function getParents(): array
     {
         $parents = [];
         $parent  = $this->parent;
@@ -34,16 +34,15 @@ final class MenuItem
         return $parents;
     }
 
-    public function setIcon(string $icon) : MenuItem
+    public function setIcon(string $icon): MenuItem
     {
         $this->icon = $icon;
         return $this;
     }
 
-    public function setTitle(string $title) : MenuItem
+    public function setTitle(string $title): MenuItem
     {
         $this->title = $title;
         return $this;
     }
-
 }
