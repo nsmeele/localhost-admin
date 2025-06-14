@@ -45,7 +45,7 @@ final class NavigationService
 
         foreach ($finder->in($path)->depth(0) as $file) {
             if ($file->getBasename() === 'index.php') {
-                continue; // Skip index.php and home.php files
+                continue;
             }
 
             $subPath = $path . '/' . $file->getBasename();
