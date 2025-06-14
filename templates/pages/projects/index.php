@@ -1,5 +1,5 @@
 <div class="my-4">
-    <button><i class="fa-solid fa-folder-open"></i>&nbsp;Init project</button>
+    <a href="/projects/new.php" class="button"><i class="fa-solid fa-folder-open"></i>&nbsp;New project</a>
 
 </div>
 
