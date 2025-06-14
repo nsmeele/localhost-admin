@@ -82,8 +82,6 @@ final class NavigationService
                     $recursive,
                     $depth + 1
                 );
-
-                $uri .= '/';
             }
 
             $this->itemMap[ $uri ] = $navigationItem;
@@ -105,12 +103,6 @@ final class NavigationService
     public function getItemByUri(string $uri): ?MenuItem
     {
         return $this->itemMap[ $uri ] ?? null;
-    }
-
-    public function getCurrentItem(): ?MenuItem
-    {
-        global $request;
-        return $this->getItemByUri($request->getRequestUri());
     }
 
     public function getRootItem(): MenuItem

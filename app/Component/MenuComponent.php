@@ -31,7 +31,7 @@ final readonly class MenuComponent implements \Stringable
 
         global $request;
 
-        if (strpos($request->getRequestUri(), $navItem->uri) !== false) {
+        if (($request->getRequestUri() == '/' && $navItem->uri == '/') || (strlen($navItem->uri) > 1 &&  strpos($request->getRequestUri(), $navItem->uri) !== false)) {
             $navItemClass[] = 'text-orange-500';
         }
 

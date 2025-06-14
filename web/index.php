@@ -16,10 +16,10 @@ define("HOME_URL", $request->getSchemeAndHttpHost());
 $basePath              = realpath(ROOT_PATH.'/templates/pages');
 $navLabels             = [];
 $navigation            = new NavigationService($basePath)->setFromPath();
-$currentNavigationItem = $navigation->getCurrentItem();
+$currentNavigationItem = $navigation->getItemByUri($request->getRequestUri());
 $fileSystem            = new \Symfony\Component\Filesystem\Filesystem();
 
-$navigation->getItemByUri('/projects/')
+$navigation->getItemByUri('/projects')
     ?->setIcon('heart fa-fw')
     ->setTitle('Projecten');
 
