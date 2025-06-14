@@ -1,9 +1,12 @@
 <?php
 
-namespace Service;
+namespace Component;
 
-#[\AllowDynamicProperties]
-class MenuService
+use Component\Navigation\MenuItem;
+use Service\NavigationService;
+use Service\RequestService;
+
+final readonly class MenuComponent implements \Stringable
 {
     public function __construct(
         protected NavigationService $navigationService,
@@ -11,29 +14,30 @@ class MenuService
     ) {
     }
 
-    protected function fetchLevelItem(
-        NavigationItemService $navItem,
+    private function fetchLevelItem(
+        MenuItem $navItem,
         bool $recursive = true,
-        int $depth = 0
+        int $depth = 0,
     ): string {
         $navLabels      = $this->navigationService->getNavLabels();
         $navLinkClasses = [
-            'nav-link',
-            'd-flex',
-            'align-items-center',
+            'flex',
         ];
 
         $navItemHtml = sprintf(
             '<a href="%s" class="%s">%s%s</a>',
             $navItem->url,
             join(' ', $navLinkClasses),
-            (! empty($navItem->icon) ? '<span><i class="fa-solid fa-' . $navItem->icon . ' me-2"></i></span>' : ''),
+            (! empty($navItem->icon) ? '<span class="ms-1"><i class="fa-solid fa-' . $navItem->icon . '"></i></span>' : ''),
             $navLabels[ $navItem->uri ]
         );
 
         $navItemClass = ['nav-item'];
-        if (strpos(RequestService::getInstance()->getRequestUri(), $navItem->uri) !== false) {
-            $navItemClass[] = 'active';
+
+        global $request;
+
+        if (strpos($request->getRequestUri(), $navItem->uri) !== false) {
+            $navItemClass[] = 'text-orange-500';
         }
 
         $childrenHtml = '';
@@ -42,10 +46,14 @@ class MenuService
             $childrenHtml = $this->fetchLevel($navItem->children, $recursive, $depth + 1);
         }
 
-        return sprintf('<li class="%s">%s</li>', join(' ', $navItemClass), $navItemHtml . $childrenHtml);
+        return sprintf(
+            '<li class="%s">%s</li>',
+            join(' ', $navItemClass),
+            $navItemHtml . $childrenHtml
+        );
     }
 
-    public function fetchLevel(
+    private function fetchLevel(
         array $navItems,
         bool $recursive = true,
         int $depth = 0,
@@ -68,7 +76,7 @@ class MenuService
         return $html;
     }
 
-    protected function getContainerFormat()
+    private function getContainerFormat(): string
     {
         return '<ul data-depth="%d">%s</ul>';
     }

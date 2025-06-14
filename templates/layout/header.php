@@ -1,29 +1,30 @@
 <!DOCTYPE html>
-<html class="h-100">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="<?php echo HOME_URL; ?>/assets/css/main.css" rel="stylesheet">
+    <link href="/dist/css/app.css" rel="stylesheet">
 
     <title>My Localhost Admin</title>
 
 </head>
 <body>
 
-<div id="page-wrapper" class="d-flex flex-nowrap flex-grow-1 min-vh-100">
-    <div id="sidebar" class="bg-dark text-white px-4 pt-4 d-flex flex-column position-relative">
+<div id="page-wrapper" class="flex">
+    <div id="sidebar" class="bg-gray-900 text-gray-100 lg:min-h-screen min-w-[240px] p-8 flex column relative">
 
         <div class="inner">
-            <div class="h5">Menu</div>
+            <div class="font-medium">Menu</div>
             <nav>
                 <?php
-                echo new Service\MenuService($navigation, false);
+                global $navigation;
+                echo new Component\MenuComponent($navigation, true);
                 ?>
             </nav>
 
         </div>
 
-        <div class="real-time mt-lg-auto position-sticky sticky-bottom py-4 border-top">
+        <div class="absolute bottom-0 left-0">
              <i class="fa-solid fa-calendar-alt" aria-hidden="true"></i>
             <span id="date">&nbsp;</span><br>
             <span id="clock">&nbsp;</span>
@@ -31,13 +32,12 @@
 
     </div>
 
-    <main class="w-100 p-4">
-
-        <div class="container">
+    <main class="w-full p-4">
 
             <?php
+            global $currentNavigationItem;
             if ($currentNavigationItem) {
-                $breadcrumb = new \Service\BreadcrumbService($currentNavigationItem);
+                $breadcrumb = new Component\BreadcrumbComponent($currentNavigationItem);
                 echo $breadcrumb;
 
                 ?>

@@ -8,10 +8,12 @@ class FileSystemService
 {
     use SingletonPatternTrait;
 
-    protected $cache = [];
+    protected array $cache = [];
 
-    public function getFolderContents(?string $path = null, $excludeFiles = false)
-    {
+    public function getFolderContents(
+        ?string $path = null,
+        bool $excludeFiles = false
+    ) {
         if (empty($path) || $path == 'root') {
             $path = dirname(ROOT_PATH);
         }

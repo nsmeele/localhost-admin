@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+.breadcrumb {
+    @apply bg-gray-100 text-gray-700 p-4 rounded-lg flex mb-6;
+
+    li {
+        &:not(:first-child)::before {
+            @apply content-['/'] mx-2;
+        }
+
+        a {
+            @apply hover:text-blue-500;
+        }
+    }
+
+}
+
+@layer components {
+    h1 {
+        @apply text-3xl font-bold mb-4;
+    }
+
+    button {
+        @apply bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 cursor-pointer;
+    }
+}

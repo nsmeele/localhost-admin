@@ -1,41 +1,31 @@
 <?php
 
 use Service\NavigationService;
+use Symfony\Component\HttpFoundation\Request;
 
-require_once 'vendor/autoload.php';
+define("ROOT_PATH", realpath(__DIR__));
 
-define("ROOT_PATH", dirname(__FILE__));
+require_once ROOT_PATH.'/vendor/autoload.php';
 
-$request = \Service\RequestService::getInstance();
+global $request, $navigation, $currentNavigationItem;
 
-define("HOME_URL", $request->getHomeUrl());
+$request = Request::createFromGlobals();
 
-$basePath              = realpath(ROOT_PATH . '/pages');
+define("HOME_URL", $request->getSchemeAndHttpHost());
+
+$basePath              = realpath(ROOT_PATH.'/templates/pages');
 $navLabels             = [];
-$navigation            = (new NavigationService($basePath))->setFromPath();
+$navigation            = new NavigationService($basePath)->setFromPath();
 $currentNavigationItem = $navigation->getCurrentItem();
 
-try {
-    $navigation->getItemByUri('/dashboard')->icon   = 'power-off fa-fw';
-    $navigation->getItemByUri('/projects')->icon    = 'heart fa-fw';
-    $navigation->getItemByUri('/server-info')->icon = 'battery-three-quarters fa-fw';
+$navigation->getItemByUri('/projects')->icon = 'heart fa-fw';
 
-    $navigation->setNavLabels([
-        '/projects'          => 'Projects',
-        '/server-info'       => 'Server Info',
-        '/projects/overview' => 'Admin',
-        '/projects/edit'     => 'Edit Project',
-        '/projects/new'      => 'New Project',
-    ]);
+$navigation->setNavLabels(['/projects' => 'Projects',]);
 
-    require_once 'layout/header.php';
+require_once ROOT_PATH.'/templates/layout/header.php';
 
-    if ($currentNavigationItem && file_exists($currentNavigationItem->path)) {
-        require_once $currentNavigationItem->path;
-    }
-} catch (\Throwable $exception) {
-    printf($exception);
+if ($currentNavigationItem && file_exists($currentNavigationItem->path)) {
+    require_once $currentNavigationItem->path;
 }
 
-
-require_once 'layout/footer.php';
+require_once ROOT_PATH.'/templates/layout/footer.php';

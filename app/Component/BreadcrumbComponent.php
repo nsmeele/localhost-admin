@@ -1,23 +1,19 @@
 <?php
 
-namespace Service;
+namespace Component;
 
-class BreadcrumbService
+use Component\Navigation\MenuItem;
+use Service\NavigationService;
+
+final readonly class BreadcrumbComponent implements \Stringable
 {
     public function __construct(
-        protected NavigationItemService $currentNode
+        protected MenuItem $currentNode
     ) {
-    }
-
-    protected function fetchItem(NavigationItemService $item)
-    {
     }
 
     public function __toString(): string
     {
-        /**
-         * @var NavigationService $navigation
-         */
         $navigation = $this->currentNode->navigation;
         $parents    = $this->currentNode->getParents();
 

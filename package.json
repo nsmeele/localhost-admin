@@ -1,9 +1,25 @@
 {
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^6.5.2",
-    "bootstrap": "^5.3.3"
+    "@fortawesome/fontawesome-free": "^6.5.2"
   },
   "scripts": {
-    "fix-php": "./vendor/bin/phpcbf --standard=PSR12 app"
-  }
+    "fix-php": "./vendor/bin/phpcbf --standard=PSR12 app",
+    "dev": "vite",
+    "build": "vite build",
+    "watch": "vite build --watch",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.10",
+    "tailwindcss": "^4.1.10",
+    "vite": "^6.3.5"
+  },
+  "name": "localhost-admin",
+  "version": "1.0.0",
+  "description": "Admin for server",
+  "main": "index.js",
+  "repository": "git@github.com:nsmeele/localhost-admin.git",
+  "author": "Nathalie Smeele",
+  "license": "MIT",
+  "type": "module"
 }

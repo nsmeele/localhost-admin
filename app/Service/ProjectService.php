@@ -8,13 +8,13 @@ class ProjectService
 {
     public function getProjects(
         ?string $path = null,
-        $excludeFiles = false
+        bool $excludeFiles = false
     ): array {
         $fileSystemService = FileSystemService::getInstance();
         return $fileSystemService->getFolderContents($path, $excludeFiles);
     }
 
-    public function createDatabase($dbName): void
+    public function createDatabase(string $dbName): void
     {
         if (isset($_POST[ 'setup-db' ]) && $_POST[ 'setup-db' ] == true) {
             if ($_POST[ 'select-place' ] == 'new-project') {
