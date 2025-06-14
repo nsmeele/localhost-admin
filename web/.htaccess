@@ -1,0 +1,15 @@
+RewriteBase /
+
+# Allow direct access to files in these directories
+RewriteRule ^(css|js|assets|images|fonts)/.*$ - [L]
+
+# Allow direct access to these file types
+RewriteCond %{REQUEST_FILENAME} \.(css|js|jpe?g|gif|png|svg|webp|ico|pdf|doc|docx|xls|xlsx|eot|ttf|woff|woff2)$ [NC]
+RewriteRule . - [L]
+
+# Check if the requested file exists
+RewriteCond %{REQUEST_FILENAME} !-f
+# Check if the requested directory exists
+RewriteCond %{REQUEST_FILENAME} !-d
+# Redirect all other requests to index.php
+RewriteRule ^(.*)$ index.php [QSA,L]

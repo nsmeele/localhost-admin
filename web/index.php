@@ -19,8 +19,12 @@ $navigation            = new NavigationService($basePath)->setFromPath();
 $currentNavigationItem = $navigation->getItemByUri($request->getRequestUri());
 $fileSystem            = new \Symfony\Component\Filesystem\Filesystem();
 
+$navigation->getItemByUri('/home.php')
+    ?->setIcon('home')
+    ->setTitle('Home');
+
 $navigation->getItemByUri('/projects')
-    ?->setIcon('heart fa-fw')
+    ?->setIcon('heart')
     ->setTitle('Projecten');
 
 require_once ROOT_PATH.'/templates/layout/header.php';

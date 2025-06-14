@@ -5,14 +5,14 @@ namespace Component\Navigation;
 final class MenuItem
 {
     public function __construct(
-        public readonly string $url,
+        private(set) readonly string $url,
         public readonly string $uri,
-        public string $title,
+        private(set) string $title,
         public string $path,
-        public string $icon = 'chevron-right',
-        public readonly ?MenuItem $parent = null,
+        private(set) string $icon = 'chevron-right',
+        private(set) readonly ?MenuItem $parent = null,
         public array $children = [],
-        private ?\SplFileInfo $file = null,
+        private(set) readonly ?\SplFileInfo $file = null,
     ) {
     }
 

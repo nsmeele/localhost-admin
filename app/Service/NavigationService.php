@@ -7,7 +7,6 @@ use Symfony\Component\Finder\Finder;
 
 final class NavigationService
 {
-    protected array $navLabels = [];
 
     /**
      * @var MenuItem[]
@@ -22,35 +21,23 @@ final class NavigationService
     public function __construct(
         protected readonly string $basePath,
     ) {
-        $homeNavItem = new MenuItem(
-            url: HOME_URL,
-            uri: '/',
-            title: 'Home',
-            path: false,
-            icon: 'home',
-        );
-
-        $this->items          = [$homeNavItem];
-        $this->itemMap[ '/' ] = $homeNavItem;
     }
 
     public function setFromPath(
         ?string $path = null,
         bool $recursive = true,
-    ): NavigationService {
-        $path                  = $path ?? $this->basePath;
-        $homeNavItem           = $this->items[ 0 ];
-        $homeNavItem->children = $this->getItemsFromPath($homeNavItem, $path, $recursive);
+    ) : NavigationService {
+        $this->items = $this->getItemsFromPath(null, $path, $recursive);
 
         return $this;
     }
 
     public function getItemsFromPath(
-        MenuItem $parent,
+        ?MenuItem $parent = null,
         ?string $path = null,
         bool $recursive = true,
         int $depth = 0,
-    ): array {
+    ) : array {
         $path     = $path ?? $this->basePath;
         $basePath = $this->basePath;
 
@@ -62,12 +49,12 @@ final class NavigationService
                 continue; // Skip index.php and home.php files
             }
 
-            $subPath = $path . '/' . $file->getBasename();
+            $subPath = $path.'/'.$file->getBasename();
 
             $uri = str_replace($basePath, '', $subPath);
 
             $navigationItem = new MenuItem(
-                url: HOME_URL . $uri,
+                url: HOME_URL.$uri,
                 uri: $uri,
                 title: ucfirst(strtolower($file->getBasename('.php'))),
                 path: $subPath,
@@ -91,22 +78,14 @@ final class NavigationService
         return $navItems;
     }
 
-    public function getItems(bool $includeHome = false): array
+    public function getItems() : array
     {
-        if ($includeHome) {
-            return $this->items;
-        }
-
-        return $this->items[ 0 ]->children;
+        return $this->items;
     }
 
-    public function getItemByUri(string $uri): ?MenuItem
+    public function getItemByUri(string $uri) : ?MenuItem
     {
         return $this->itemMap[ $uri ] ?? null;
     }
 
-    public function getRootItem(): MenuItem
-    {
-        return $this->items[ 0 ];
-    }
 }

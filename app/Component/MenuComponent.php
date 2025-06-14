@@ -8,22 +8,25 @@ use Service\RequestService;
 
 final readonly class MenuComponent implements \Stringable
 {
+
+    private NavigationService $navigationService;
+
     public function __construct(
-        protected NavigationService $navigationService,
-        protected bool $includeHome = true,
     ) {
+        global $navigation;
+        $this->navigationService = $navigation;
     }
 
     private function fetchLevelItem(
         MenuItem $navItem,
         bool $recursive = true,
         int $depth = 0,
-    ): string {
+    ) : string {
         $navItemHtml = sprintf(
             '<a href="%s" class="%s">%s%s</a>',
             $navItem->url,
             join(' ', ['flex']),
-            (! empty($navItem->icon) ? '<span class="ms-1"><i class="fa-solid fa-' . $navItem->icon . '"></i></span>' : ''),
+            (! empty($navItem->icon) ? '<span class="ms-1"><i class="fa-solid fa-'.$navItem->icon.'"></i></span>' : ''),
             $navItem->title
         );
 
@@ -31,7 +34,7 @@ final readonly class MenuComponent implements \Stringable
 
         global $request;
 
-        if (($request->getRequestUri() == '/' && $navItem->uri == '/') || (strlen($navItem->uri) > 1 &&  strpos($request->getRequestUri(), $navItem->uri) !== false)) {
+        if (strpos($request->getRequestUri(), $navItem->uri) !== false) {
             $navItemClass[] = 'text-orange-500';
         }
 
@@ -44,7 +47,7 @@ final readonly class MenuComponent implements \Stringable
         return sprintf(
             '<li class="%s">%s</li>',
             join(' ', $navItemClass),
-            $navItemHtml . $childrenHtml
+            $navItemHtml.$childrenHtml
         );
     }
 
@@ -53,7 +56,7 @@ final readonly class MenuComponent implements \Stringable
         bool $recursive = true,
         int $depth = 0,
         bool $wrap = true
-    ): string {
+    ) : string {
         $html = '';
 
         if (empty($navItems)) {
@@ -71,28 +74,19 @@ final readonly class MenuComponent implements \Stringable
         return $html;
     }
 
-    private function getContainerFormat(): string
+    private function getContainerFormat() : string
     {
         return '<ul data-depth="%d">%s</ul>';
     }
 
-    public function __toString(): string
+    public function __toString() : string
     {
-        if (! $this->includeHome) {
-            return $this->fetchLevel(
-                $this->navigationService->getItems($this->includeHome),
-            );
-        }
-
-        $homeItem = $this->navigationService->getItems(true)[ 0 ];
-
-        $html = $this->fetchLevelItem(
-            $homeItem,
-            false,
-            0
+        $html = $this->fetchLevel(
+            $this->navigationService->getItems(),
+            true,
+            0,
+            false
         );
-
-        $html .= $this->fetchLevel($homeItem->children, true, 0, false);
 
         return sprintf($this->getContainerFormat(), 0, $html);
     }
