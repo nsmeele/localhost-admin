@@ -2,57 +2,28 @@
 
 namespace Service;
 
-use Utility\StringUtility;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 
-class ProjectService
+final readonly class ProjectService
 {
-    public function getProjects(string $path, $excludeFiles = false): array
+    public function getProjectPath(): string
     {
-        $fileSystemService = FileSystemService::getInstance();
-        return $fileSystemService->getFolderContents($path, $excludeFiles);
+        $fileSystem  = new Filesystem();
+        $projectPath = ROOT_PATH . '/projects';
+        $fileSystem->mkdir($projectPath, 0755);
+        return $projectPath;
     }
 
-    public function createDatabase($dbName): void
-    {
-        if (isset($_POST[ 'setup-db' ]) && $_POST[ 'setup-db' ] == true) {
-            if ($_POST[ 'select-place' ] == 'new-project') {
-                $dbName = StringUtility::replaceWithUnderscore($dbName);
-                include_once ROOT_PATH . '/inc/project-admin/setup_database.php';
-            } elseif ($_POST[ 'select-place' ] == 'subproject' && ! empty($_POST[ 'select-project' ])) {
-                $parentProject = StringUtility::replaceWithUnderscore($_POST[ 'select-project' ]);
-                $dbName        = $parentProject . '_' . StringUtility::replaceWithUnderscore($dbName);
-                include_once ROOT_PATH . '/inc/project-admin/setup_database.php';
-            }
-        }
-    }
-
-    public function createProjectFolder($path, $projectname)
-    {
-        if (! file_exists($path) && mkdir($path) == true) {
-            echo '<p>New folder created: <strong>' . $projectname . '</strong></p>';
-            $this->createDatabase($projectname);
-            $_POST = '';
+    public function listProjects(
+        bool $excludeFiles = false
+    ): Finder {
+        $path = $this->getProjectPath();
+        $finder = new Finder();
+        if ($excludeFiles) {
+            return $finder->directories()->in($path);
         } else {
-            echo 'Folder <strong>' . $projectname . '</strong> bestaat al';
+            return $finder->in($path);
         }
-    }
-
-    public function controlFolderName($path, $foldername)
-    {
-        $foldername = preg_replace("/[^a-zA-Z0-9.]/", "-", $foldername);
-
-        $projectFolders   = $this->getProjects($path);
-        $newProjectFilter = array ();
-        foreach ($projectFolders as $projectFolder) {
-            // Check for folders with the name 'new-project', if so, add to array
-            if (strpos($projectFolder, $foldername) !== false) {
-                $newProjectFilter[] = $projectFolder;
-            }
-        }
-
-        $newProjectNumber = (! empty($newProjectFilter) ? count($newProjectFilter) + 1 : '');
-        $newProjectName   = (! empty($newProjectFilter) ? $foldername . '-' . $newProjectNumber : $foldername);
-
-        return $newProjectName;
     }
 }
