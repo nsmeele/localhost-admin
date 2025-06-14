@@ -41,6 +41,6 @@
                 echo $breadcrumb;
 
                 ?>
-                <h1><?php echo $currentNavigationItem->getLabel(); ?></h1>
+                <h1><?php echo $currentNavigationItem->title; ?></h1>
                 <?php
             }

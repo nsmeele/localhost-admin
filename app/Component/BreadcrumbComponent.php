@@ -12,27 +12,26 @@ final readonly class BreadcrumbComponent implements \Stringable
     ) {
     }
 
-    public function __toString(): string
+    public function __toString() : string
     {
-        $navigation = $this->currentNode->navigation;
-        $parents    = $this->currentNode->getParents();
+        $parents = $this->currentNode->getParents();
 
         $html = '';
         foreach (array_reverse($parents) as $parent) {
             if ($parent->uri === '/') {
-                $html .= '<li class="breadcrumb-item">' .
-                    '<a href="' . $parent->url . '"><i class="fa-solid fa-' . $parent->icon . '"></i></a>' .
+                $html .= '<li class="breadcrumb-item">'.
+                    '<a href="'.$parent->url.'"><i class="fa-solid fa-'.$parent->icon.'"></i></a>'.
                     '</li>';
 
                 continue;
             }
 
-            $html .= '<li class="breadcrumb-item">' .
-                '<a href="' . $parent->url . '">' . $navigation->getNavLabelByUri($parent->uri) . '</a>' .
+            $html .= '<li class="breadcrumb-item">'.
+                '<a href="'.$parent->url.'">'.$parent->title.'</a>'.
                 '</li>';
         }
 
-        $html .= '<li class="breadcrumb-item">' . $navigation->getNavLabelByUri($this->currentNode->uri) . '</li>';
+        $html .= '<li class="breadcrumb-item">'.$this->currentNode->title.'</li>';
 
         return sprintf('<ol class="breadcrumb">%s</ol>', $html);
     }

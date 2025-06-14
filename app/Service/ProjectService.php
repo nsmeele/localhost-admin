@@ -2,28 +2,42 @@
 
 namespace Service;
 
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 use Utility\StringUtility;
 
 class ProjectService
 {
     public function getProjects(
-        ?string $path = null,
+        string $path,
         bool $excludeFiles = false
-    ): array {
-        $fileSystemService = FileSystemService::getInstance();
-        return $fileSystemService->getFolderContents($path, $excludeFiles);
+    ): Finder {
+        $finder = new Finder();
+        if ($excludeFiles) {
+            return $finder->directories()->in($path);
+        } else {
+            return $finder->in($path);
+        }
     }
 
     public function createDatabase(string $dbName): void
     {
-        if (isset($_POST[ 'setup-db' ]) && $_POST[ 'setup-db' ] == true) {
-            if ($_POST[ 'select-place' ] == 'new-project') {
+        if (empty($dbName)) {
+            throw new \InvalidArgumentException('Database name cannot be empty');
+        }
+
+        /**
+         * @var \Symfony\Component\HttpFoundation\Request $request
+         */
+        global $request;
+
+        if ((int)$request->get('setup-db')) {
+            if ($request->get('select-place') == 'new-project') {
                 $dbName = StringUtility::replaceWithUnderscore($dbName);
                 include_once ROOT_PATH . '/inc/project-admin/setup_database.php';
-            } elseif ($_POST[ 'select-place' ] == 'subproject' && ! empty($_POST[ 'select-project' ])) {
-                $parentProject = StringUtility::replaceWithUnderscore($_POST[ 'select-project' ]);
+            } elseif ($request->get('select-place') == 'subproject' && ! empty($request->get('select-project'))) {
+                $parentProject = StringUtility::replaceWithUnderscore($request->get('select-project'));
                 $dbName        = $parentProject . '_' . StringUtility::replaceWithUnderscore($dbName);
-                include_once ROOT_PATH . '/inc/project-admin/setup_database.php';
             }
         }
     }

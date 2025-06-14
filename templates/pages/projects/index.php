@@ -27,8 +27,6 @@
     </div>
 
 
-
-
 </form>
 
 <form action="" id="search-form">
@@ -40,15 +38,16 @@
 
 <?php
 $projectService = new \Service\ProjectService();
-$projects       = $projectService->getProjects(excludeFiles: true);
+$fileSystem     = new \Symfony\Component\Filesystem\Filesystem();
+$projectPath    = ROOT_PATH.'/projects';
+$fileSystem->mkdir($projectPath);
+$projects = $projectService->getProjects(path: $projectPath, excludeFiles: true);
 
-if (! empty($projects)) {
-
-    ?>
+?>
 
     <div class="grid grid-cols-3">
 
-        <?php
+    <?php
 
         foreach ($projects as $project) {
             ?>
@@ -56,7 +55,8 @@ if (! empty($projects)) {
             <div class="col">
                 <div class="border-top p-2 flex items-center">
                     <div>
-                        <h6><i class="fa-solid fa-folder"></i><?php echo $project; ?></h6>
+                        <h6><i class="fa-solid fa-folder"></i><?php
+                            echo $project; ?></h6>
                     </div>
                     <select class="ms-auto form-select form-select-sm w-auto" name="" id="">
                         <option value="">Edit</option>
@@ -79,7 +79,6 @@ if (! empty($projects)) {
         ?>
     </div>
     <?php
-}
 
 
 

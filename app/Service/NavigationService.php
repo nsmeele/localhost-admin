@@ -3,6 +3,7 @@
 namespace Service;
 
 use Component\Navigation\MenuItem;
+use Symfony\Component\Finder\Finder;
 
 final class NavigationService
 {
@@ -22,7 +23,6 @@ final class NavigationService
         protected readonly string $basePath,
     ) {
         $homeNavItem = new MenuItem(
-            navigation: $this,
             url: HOME_URL,
             uri: '/',
             title: 'Home',
@@ -37,15 +37,10 @@ final class NavigationService
     public function setFromPath(
         ?string $path = null,
         bool $recursive = true,
-    ): NavigationService {
-        if (! $path) {
-            $path = $this->basePath;
-        }
-
+    ) : NavigationService {
+        $path                  = $path ?? $this->basePath;
         $homeNavItem           = $this->items[ 0 ];
         $homeNavItem->children = $this->getItemsFromPath($homeNavItem, $path, $recursive);
-
-        $this->setNavLabelsFromItems($this->items);
 
         return $this;
     }
@@ -55,45 +50,41 @@ final class NavigationService
         ?string $path = null,
         bool $recursive = true,
         int $depth = 0,
-    ): array {
-        if (! $path) {
-            $path = $this->basePath;
-        }
-
+    ) : array {
+        $path     = $path ?? $this->basePath;
         $basePath = $this->basePath;
 
         $navItems = [];
-        $files    = array_diff(scandir($path), array ('.', '..'));
+        $finder    = new Finder();
 
-        foreach ($files as $file) {
-            if ($file === 'index.php') {
-                // we handle that differently
-                continue;
+        foreach ($finder->in($path)->depth(0) as $file) {
+
+            if ($file->getBasename() === 'index.php') {
+                continue; // Skip index.php and home.php files
             }
 
-            $subPath = $path . '/' . $file;
-            $uri     = str_replace($basePath, '', $path . '/' . basename($file, '.php'));
+            $subPath = $path.'/'.$file->getBasename();
+
+            $uri = str_replace($basePath, '', $subPath);
 
             $navigationItem = new MenuItem(
-                navigation: $this,
                 url: HOME_URL . $uri,
                 uri: $uri,
-                title: ucfirst(strtolower(basename($subPath, '.php'))),
+                title: ucfirst(strtolower($file->getBasename('.php'))),
                 path: $subPath,
                 parent: $parent,
             );
 
-            if (is_dir($subPath)) {
+            if ($file->isDir() && $recursive) {
                 $navigationItem->path .= '/index.php';
+                $navigationItem->children = $this->getItemsFromPath(
+                    $navigationItem,
+                    $subPath,
+                    $recursive,
+                    $depth + 1
+                );
 
-                if ($recursive) {
-                    $navigationItem->children = $this->getItemsFromPath(
-                        $navigationItem,
-                        $subPath,
-                        $recursive,
-                        $depth + 1
-                    );
-                }
+                $uri .= '/';
             }
 
             $this->itemMap[ $uri ] = $navigationItem;
@@ -103,28 +94,7 @@ final class NavigationService
         return $navItems;
     }
 
-    public function setNavLabelsFromItems(array $items): void
-    {
-        foreach ($items as $item) {
-            $this->navLabels[ $item->uri ] = $item->title;
-            if (! empty($item->children)) {
-                $this->setNavLabelsFromItems($item->children);
-            }
-        }
-    }
-
-    public function setNavLabels(array $labels): NavigationService
-    {
-        $this->navLabels = array_merge($this->navLabels, $labels);
-        return $this;
-    }
-
-    public function getNavLabels(): array
-    {
-        return $this->navLabels;
-    }
-
-    public function getItems(bool $includeHome = false): array
+    public function getItems(bool $includeHome = false) : array
     {
         if ($includeHome) {
             return $this->items;
@@ -133,27 +103,18 @@ final class NavigationService
         return $this->items[ 0 ]->children;
     }
 
-    public function getItemByUri(string $uri): ?MenuItem
+    public function getItemByUri(string $uri) : ?MenuItem
     {
-        if (isset($this->itemMap[ $uri ])) {
-            return $this->itemMap[ $uri ];
-        }
+        return $this->itemMap[ $uri ] ?? null;
     }
 
-    public function getNavLabelByUri(string $uri): ?string
+    public function getCurrentItem() : ?MenuItem
     {
-        if (isset($this->navLabels[ $uri ])) {
-            return $this->navLabels[ $uri ];
-        }
+        global $request;
+        return $this->getItemByUri($request->getRequestUri());
     }
 
-    public function getCurrentItem(): ?MenuItem
-    {
-        $requestUri = RequestService::getInstance()->getRequestUri();
-        return $this->getItemByUri($requestUri);
-    }
-
-    public function getRootItem(): MenuItem
+    public function getRootItem() : MenuItem
     {
         return $this->items[ 0 ];
     }

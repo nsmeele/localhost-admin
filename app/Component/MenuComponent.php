@@ -19,17 +19,12 @@ final readonly class MenuComponent implements \Stringable
         bool $recursive = true,
         int $depth = 0,
     ): string {
-        $navLabels      = $this->navigationService->getNavLabels();
-        $navLinkClasses = [
-            'flex',
-        ];
-
         $navItemHtml = sprintf(
             '<a href="%s" class="%s">%s%s</a>',
             $navItem->url,
-            join(' ', $navLinkClasses),
+            join(' ', ['flex']),
             (! empty($navItem->icon) ? '<span class="ms-1"><i class="fa-solid fa-' . $navItem->icon . '"></i></span>' : ''),
-            $navLabels[ $navItem->uri ]
+            $navItem->title
         );
 
         $navItemClass = ['nav-item'];

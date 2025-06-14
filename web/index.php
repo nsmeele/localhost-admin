@@ -3,7 +3,7 @@
 use Service\NavigationService;
 use Symfony\Component\HttpFoundation\Request;
 
-define("ROOT_PATH", realpath(__DIR__));
+define("ROOT_PATH", realpath(dirname(__FILE__, 2)));
 
 require_once ROOT_PATH.'/vendor/autoload.php';
 
@@ -17,15 +17,20 @@ $basePath              = realpath(ROOT_PATH.'/templates/pages');
 $navLabels             = [];
 $navigation            = new NavigationService($basePath)->setFromPath();
 $currentNavigationItem = $navigation->getCurrentItem();
+$fileSystem            = new \Symfony\Component\Filesystem\Filesystem();
 
-$navigation->getItemByUri('/projects')->icon = 'heart fa-fw';
-
-$navigation->setNavLabels(['/projects' => 'Projects',]);
+$navigation->getItemByUri('/projects/')
+    ?->setIcon('heart fa-fw')
+    ->setTitle('Projecten');
 
 require_once ROOT_PATH.'/templates/layout/header.php';
 
-if ($currentNavigationItem && file_exists($currentNavigationItem->path)) {
-    require_once $currentNavigationItem->path;
+if ($currentNavigationItem) {
+    if ($fileSystem->exists($currentNavigationItem->path)) {
+        require_once $currentNavigationItem->path;
+    }
+} else {
+    echo '<h1>Page not found</h1>';
 }
 
 require_once ROOT_PATH.'/templates/layout/footer.php';
