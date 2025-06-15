@@ -11,14 +11,24 @@ final readonly class FormRenderer implements \Stringable
     ) {
     }
 
-    private function renderLabel(FormView $child): string
+    private function renderLabel(FormView $child) : string
     {
-        return '<label for="' . $child->vars[ 'id' ] . '">' . $child->vars[ 'label' ] . '</label>';
+        return '<label for="'.$child->vars[ 'id' ].'">'.$child->vars[ 'label' ].'</label>';
     }
 
-    private function renderChoice(FormView $child): string
+    private function renderChoice(FormView $child) : string
     {
-        $html = sprintf("<select id=\"%s\" name=\"%s\">", $child->vars[ 'id' ], $child->vars[ 'full_name' ]);
+        $html        = sprintf("<select id=\"%s\" name=\"%s\">", $child->vars[ 'id' ], $child->vars[ 'full_name' ]);
+        $placeholder = $child->vars[ 'placeholder' ] ?? null;
+
+        if ($placeholder) {
+            $html .= sprintf(
+                "<option value=\"\"%s>%s</option>",
+                $child->vars[ 'value' ] === null ? ' selected' : '',
+                htmlspecialchars($placeholder)
+            );
+        }
+
         foreach ($child->vars[ 'choices' ] as $choice) {
             $selected = $choice->value === $child->vars[ 'value' ] ? ' selected' : '';
             $html     .= sprintf(
@@ -34,14 +44,14 @@ final readonly class FormRenderer implements \Stringable
         return $html;
     }
 
-    private function renderInput(FormView $child): string
+    private function renderInput(FormView $child) : string
     {
-        return '<input type="' . $child->vars[ 'block_prefixes' ][ 1 ] . '" id="' . $child->vars[ 'id' ] . '" name="' . $child->vars[ 'full_name' ] . '" value="' . htmlspecialchars(
-            $child->vars[ 'value' ]
-        ) . '">';
+        return '<input type="'.$child->vars[ 'block_prefixes' ][ 1 ].'" id="'.$child->vars[ 'id' ].'" name="'.$child->vars[ 'full_name' ].'" value="'.htmlspecialchars(
+                $child->vars[ 'value' ] ?? ''
+            ).'">';
     }
 
-    private function renderWidget(FormView $child): string
+    private function renderWidget(FormView $child) : string
     {
         return match ($child->vars[ 'block_prefixes' ][ 1 ]) {
             'textarea' => sprintf(
@@ -57,19 +67,31 @@ final readonly class FormRenderer implements \Stringable
         };
     }
 
-    public function __toString(): string
+    private function formStart(FormView $formView) : string
     {
-        $html = '<form method="POST">';
+        $action = $formView->vars[ 'action' ] ?? '';
+        $method = strtoupper($formView->vars[ 'method' ] ?? 'POST');
+        return sprintf('<form action="%s" method="%s">', htmlspecialchars($action), htmlspecialchars($method));
+    }
+
+    private function formEnd() : string
+    {
+        return '</form>';
+    }
+
+    public function __toString() : string
+    {
+        $html = $this->formStart($this->formView);
         foreach ($this->formView->children as $child) {
             $html .= '<div>';
-            $html .= $this->renderLabel($child) . '<br>';
+            $html .= $this->renderLabel($child).'<br>';
             $html .= $this->renderWidget($child);
-            foreach ($child->vars[ 'errors' ] as $error) {
-                $html .= '<span style="color:red;">' . $error->getMessage() . '</span><br>';
+            foreach ($child->vars[ 'errors' ] ?? [] as $error) {
+                $html .= '<span style="color:red;">'.$error->getMessage().'</span><br>';
             }
             $html .= '</div>';
         }
-        $html .= '<button type="submit">Save</button></form>';
+        $html .= $this->formEnd();
         return $html;
     }
 }
