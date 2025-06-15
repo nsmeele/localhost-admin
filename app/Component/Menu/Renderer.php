@@ -2,28 +2,26 @@
 
 namespace Component\Menu;
 
-use Service\NavigationService;
+use Component\MenuComponent;
 
 final readonly class Renderer implements \Stringable
 {
-    private NavigationService $navigationService;
 
-    public function __construct()
-    {
-        global $navigation;
-        $this->navigationService = $navigation;
+    public function __construct(
+        private MenuComponent $menuComponent,
+    ) {
     }
 
     private function fetchLevelItem(
         Item $navItem,
         bool $recursive = true,
         int $depth = 0,
-    ): string {
+    ) : string {
         $navItemHtml = sprintf(
             '<a href="%s" class="%s">%s%s</a>',
             $navItem->url,
             'flex',
-            (! empty($navItem->icon) ? '<span class="mr-1"><i class="fa-solid fa-fw fa-' . $navItem->icon . '"></i></span>' : ''),
+            (! empty($navItem->icon) ? '<span class="mr-1"><i class="fa-solid fa-fw fa-'.$navItem->icon.'"></i></span>' : ''),
             $navItem->title
         );
 
@@ -44,7 +42,7 @@ final readonly class Renderer implements \Stringable
         return sprintf(
             '<li class="%s">%s</li>',
             join(' ', $navItemClass),
-            $navItemHtml . $childrenHtml
+            $navItemHtml.$childrenHtml
         );
     }
 
@@ -53,7 +51,7 @@ final readonly class Renderer implements \Stringable
         bool $recursive = true,
         int $depth = 0,
         bool $wrap = true
-    ): string {
+    ) : string {
         $html = '';
 
         if (empty($navItems)) {
@@ -71,15 +69,15 @@ final readonly class Renderer implements \Stringable
         return $html;
     }
 
-    private function getContainerFormat(): string
+    private function getContainerFormat() : string
     {
         return '<ul data-depth="%d">%s</ul>';
     }
 
-    public function __toString(): string
+    public function __toString() : string
     {
         $html = $this->fetchLevel(
-            $this->navigationService->getItems(),
+            $this->menuComponent->getItems(),
             true,
             0,
             false

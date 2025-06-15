@@ -2,7 +2,7 @@
 
 require_once 'setup.php';
 
-global $navigation, $request, $currentNavigationItem;
+global $request, $currentNavigationItem;
 
 $fileSystem = new \Symfony\Component\Filesystem\Filesystem();
 
