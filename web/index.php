@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Validation;
 
 define("ROOT_PATH", realpath(dirname(__FILE__, 2)));
 
-require_once ROOT_PATH.'/vendor/autoload.php';
+require_once ROOT_PATH . '/vendor/autoload.php';
 
 global $request, $formFactory, $routes, $urlGenerator;
 

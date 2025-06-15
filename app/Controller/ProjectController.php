@@ -14,7 +14,6 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/projects', name: 'projects')]
 class ProjectController extends AbstractController
 {
-
     private ProjectService $projectService;
 
     public function __construct()
@@ -25,12 +24,12 @@ class ProjectController extends AbstractController
 
     #[Route('/', name: '_index')]
     #[MenuLabel('Projects', icon: 'folder')]
-    public function index() : Response
+    public function index(): Response
     {
         return $this->renderWithLayout([$this, 'renderProjectsView']);
     }
 
-    protected function renderProjectsView() : void
+    protected function renderProjectsView(): void
     {
         ?>
         <div class="my-4">
@@ -86,7 +85,7 @@ class ProjectController extends AbstractController
 
     #[Route('/new', name: '_new')]
     #[MenuLabel('New project')]
-    public function new() : Response
+    public function new(): Response
     {
         global $request, $formFactory;
         $formError = null;
@@ -103,18 +102,18 @@ class ProjectController extends AbstractController
                 $targetPath         = $this->projectService->getProjectPath();
 
                 if (! empty($data[ 'parent' ])) {
-                    $targetPath .= '/'.$data[ 'parent' ];
+                    $targetPath .= '/' . $data[ 'parent' ];
                 }
 
                 if (! is_dir($targetPath)) {
-                    throw new \RuntimeException('Target directory does not exist: '.$targetPath);
+                    throw new \RuntimeException('Target directory does not exist: ' . $targetPath);
                 }
 
                 $projectTypeHandler->handle($data[ 'name' ], $targetPath);
 
                 return new RedirectResponse('/projects/');
             } catch (\Throwable $e) {
-                $formError = 'Error creating project: '.$e->getMessage();
+                $formError = 'Error creating project: ' . $e->getMessage();
             }
         } elseif ($form->isSubmitted()) {
             $formError = 'Please correct the errors in the form.';
@@ -125,7 +124,7 @@ class ProjectController extends AbstractController
 
         if ($formError) {
             $html .= '<div class="bg-red-300 font-medium mb-3 py-2 px-3 shadow-sm text-red-800 rounded-lg">'
-                .htmlspecialchars($formError).
+                . htmlspecialchars($formError) .
                 '</div>';
         }
 
@@ -136,14 +135,14 @@ class ProjectController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: '_edit')]
-    public function edit(string $id) : Response
+    public function edit(string $id): Response
     {
         // Logic to edit a project by ID
         return $this->renderWithLayout("Edit project ID: $id");
     }
 
     #[Route('/{id}/remove', name: '_remove')]
-    public function remove(string $id) : Response
+    public function remove(string $id): Response
     {
         global $request, $urlGenerator;
 
@@ -158,10 +157,9 @@ class ProjectController extends AbstractController
     }
 
     #[Route('/{id}', name: '_show')]
-    public function show(string $id) : Response
+    public function show(string $id): Response
     {
         // Logic to show a project by ID
         return $this->renderWithLayout("Project ID: $id");
     }
-
 }

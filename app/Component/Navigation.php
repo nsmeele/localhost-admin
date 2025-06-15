@@ -6,7 +6,6 @@ use Component\Navigation\Item;
 
 readonly class Navigation implements \Stringable
 {
-
     /**
      * @var Item[] $items
      */
@@ -17,12 +16,12 @@ readonly class Navigation implements \Stringable
         $this->items = $this->resolveExtractedMenuItemsToItems($menu);
     }
 
-    private function resolveExtractedMenuItemsToItems(array $extractedMenuItems) : array
+    private function resolveExtractedMenuItemsToItems(array $extractedMenuItems): array
     {
         $items = [];
         foreach ($extractedMenuItems as $item) {
             $items[ $item[ 'path' ] ] = new Item(
-                url: HOME_URL.$item[ 'path' ],
+                url: HOME_URL . $item[ 'path' ],
                 uri: $item[ 'path' ],
                 menuLabel: $item[ 'label' ],
                 routeName: $item[ 'name' ] ?? '',
@@ -33,7 +32,7 @@ readonly class Navigation implements \Stringable
         return $items;
     }
 
-    public function getCurrentRouteName() : string
+    public function getCurrentRouteName(): string
     {
         global $request;
         return $request->get('_route') ?? '';
@@ -44,12 +43,12 @@ readonly class Navigation implements \Stringable
         return '<ul data-depth="%d">%s</ul>';
     }
 
-    public function getMenuItem(string $path) : ?Item
+    public function getMenuItem(string $path): ?Item
     {
         return $this->items[ $path ] ?? null;
     }
 
-    public function __toString() : string
+    public function __toString(): string
     {
         $html = '';
 

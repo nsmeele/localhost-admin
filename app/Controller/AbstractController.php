@@ -8,7 +8,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 abstract class AbstractController
 {
-
     protected Navigation $routeNavigation;
 
     protected Request $request;
@@ -24,7 +23,7 @@ abstract class AbstractController
     protected function renderWithLayout(
         string|callable $contentBlock,
         array $attr = array ()
-    ) : Response {
+    ): Response {
         ob_start();
 
         extract(array_merge([
@@ -34,7 +33,7 @@ abstract class AbstractController
                     ?->getMenuLabel() ?? 'No title provided',
         ], $attr));
 
-        require_once ROOT_PATH.'/templates/layout/header.php';
+        require_once ROOT_PATH . '/templates/layout/header.php';
 
         if (is_callable($contentBlock)) {
             $contentBlock();
@@ -42,11 +41,10 @@ abstract class AbstractController
             echo $contentBlock;
         }
 
-        require_once ROOT_PATH.'/templates/layout/footer.php';
+        require_once ROOT_PATH . '/templates/layout/footer.php';
 
         $html = ob_get_clean();
 
         return new Response($html);
     }
-
 }

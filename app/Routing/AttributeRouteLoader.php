@@ -7,7 +7,6 @@ use Symfony\Component\Routing\Route;
 
 class AttributeRouteLoader extends AttributeClassLoader
 {
-
     /**
      * @inheritDoc
      */

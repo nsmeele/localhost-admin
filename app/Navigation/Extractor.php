@@ -1,12 +1,9 @@
 <?php
 
-// src/Navigation/NavigationExtractor.php
-
 namespace Navigation;
 
 use Symfony\Component\Routing\RouteCollection;
 use Attribute\MenuLabel;
-use ReflectionMethod;
 
 class Extractor
 {
@@ -42,7 +39,7 @@ class Extractor
 
     private function getMenuMetadata(string $class, string $method): ?array
     {
-        $methodReflection = new ReflectionMethod($class, $method);
+        $methodReflection = new \ReflectionMethod($class, $method);
         $attrs = $methodReflection->getAttributes(MenuLabel::class);
 
         if (!$attrs) {
