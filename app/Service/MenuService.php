@@ -7,7 +7,6 @@ use Symfony\Component\Finder\Finder;
 
 final readonly class MenuService
 {
-
     public function __construct(
         private string $basePath,
     ) {
@@ -18,7 +17,7 @@ final readonly class MenuService
         ?string $path = null,
         bool $recursive = true,
         int $depth = 0,
-    ) : array {
+    ): array {
         $path     = $path ?? $this->basePath;
         $basePath = $this->basePath;
 
@@ -31,12 +30,12 @@ final readonly class MenuService
                 continue;
             }
 
-            $subPath = $path.'/'.$file->getBasename();
+            $subPath = $path . '/' . $file->getBasename();
 
             $uri = str_replace($basePath, '', $subPath);
 
             $navigationItem = new Item(
-                url: HOME_URL.$uri,
+                url: HOME_URL . $uri,
                 uri: $uri,
                 title: ucfirst(strtolower($file->getBasename('.php'))),
                 path: $subPath,

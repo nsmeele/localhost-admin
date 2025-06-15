@@ -5,15 +5,15 @@ use Symfony\Component\HttpFoundation\Request;
 
 define("ROOT_PATH", realpath(dirname(__FILE__, 2)));
 
-require_once ROOT_PATH.'/vendor/autoload.php';
+require_once ROOT_PATH . '/vendor/autoload.php';
 
-global $request, $navigation, $menuService, $currentNavigationItem;
+global $request, $navigation, $currentNavigationItem;
 
 $request = Request::createFromGlobals();
 
 define("HOME_URL", $request->getSchemeAndHttpHost());
 
-$basePath              = realpath(ROOT_PATH.'/templates/pages');
+$basePath              = realpath(ROOT_PATH . '/templates/pages');
 $menuService           = new \Service\MenuService($basePath);
 $navigation            = new MenuComponent()->setItems($menuService->getItemsFromPath());
 $currentNavigationItem = $navigation->getItemByUri($request->getRequestUri());
