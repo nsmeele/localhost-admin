@@ -26,9 +26,9 @@ final readonly class Renderer implements \Stringable
 
         $navItemClass = [];
 
-        global $request;
+        global $currentNavigationItem;
 
-        if (strpos($request->getRequestUri(), $navItem->uri) !== false) {
+        if ($navItem === $currentNavigationItem) {
             $navItemClass[] = 'active';
         }
 

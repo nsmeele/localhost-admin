@@ -26,12 +26,13 @@ $projects       = $projectService->listProjects(excludeFiles: true);
 
         <div class="border-top p-2 flex items-center">
             <div>
-                <h6 class="font-bold text-lg"><i class="fa-solid fa-folder"></i><?php
-                    echo $project; ?></h6>
+                <label for="<?php echo $project->getRelativePathname(); ?>-actions" class="font-bold text-lg"><i class="fa-solid fa-folder"></i><?php
+                    echo $project->getRelativePathname(); ?></label>
             </div>
-            <select class="ms-auto form-select form-select-sm w-auto" id="">
-                <option value="">Edit</option>
-                <option value="">Delete</option>
+            <select class="ms-auto form-select form-select-sm w-auto" id="<?php echo $project->getRelativePathname(); ?>-actions">
+                <option value="">- Select option- </option>
+                <option value="edit">Edit</option>
+                <option value="delete">Delete</option>
 
                 <optgroup label="Symfony">
                     <option value="">Run command</option>

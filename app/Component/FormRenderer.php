@@ -36,7 +36,7 @@ final readonly class FormRenderer implements \Stringable
 
     private function renderInput(FormView $child): string
     {
-        return '<input type="' . $child->vars[ 'block_prefixes' ][ 1 ] . '" id="'.$child->vars[ 'id' ].'" name="' . $child->vars[ 'full_name' ] . '" value="' . htmlspecialchars(
+        return '<input type="' . $child->vars[ 'block_prefixes' ][ 1 ] . '" id="' . $child->vars[ 'id' ] . '" name="' . $child->vars[ 'full_name' ] . '" value="' . htmlspecialchars(
             $child->vars[ 'value' ]
         ) . '">';
     }
