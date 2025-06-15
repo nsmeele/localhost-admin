@@ -111,7 +111,7 @@ class ProjectController extends AbstractController
 
                 $projectTypeHandler->handle($data[ 'name' ], $targetPath);
 
-                return new RedirectResponse('/projects/');
+                return new RedirectResponse($this->urlGenerator->generate('projects'));
             } catch (\Throwable $e) {
                 $formError = 'Error creating project: ' . $e->getMessage();
             }
@@ -144,16 +144,18 @@ class ProjectController extends AbstractController
     #[Route('/{id}/remove', name: '_remove')]
     public function remove(string $id): Response
     {
-        global $request, $urlGenerator;
+        global $request;
 
-        $path = (string)$request->query->get('path');
+        throw new \RuntimeException('This feature is not implemented yet.');
 
-        $fileSystem = new \Symfony\Component\Filesystem\Filesystem();
-        if ($fileSystem->exists($path)) {
-            $fileSystem->remove($path);
-        }
+//        $path = (string)$request->query->get('path');
+//
+//        $fileSystem = new \Symfony\Component\Filesystem\Filesystem();
+//        if ($fileSystem->exists($path)) {
+//            $fileSystem->remove($path);
+//        }
 
-        return new RedirectResponse('/projects/');
+        return new RedirectResponse($this->urlGenerator->generate('projects'));
     }
 
     #[Route('/{id}', name: '_show')]

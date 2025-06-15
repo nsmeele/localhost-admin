@@ -5,6 +5,7 @@ namespace Controller;
 use Component\Navigation;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGenerator;
 
 abstract class AbstractController
 {
@@ -12,12 +13,15 @@ abstract class AbstractController
 
     protected Request $request;
 
+    protected UrlGenerator $urlGenerator;
+
     public function __construct()
     {
-        global $routes, $request;
+        global $routes, $request, $urlGenerator;
         $navigationExtractor   = new \Navigation\Extractor();
         $this->routeNavigation = new Navigation($navigationExtractor->extract($routes));
         $this->request         = $request;
+        $this->urlGenerator    = $urlGenerator;
     }
 
     protected function renderWithLayout(
