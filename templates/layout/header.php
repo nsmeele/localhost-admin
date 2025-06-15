@@ -31,13 +31,13 @@
 
     <main class="w-full p-8">
 
-            <?php
-            global $currentNavigationItem;
-            if ($currentNavigationItem) {
-                $breadcrumb = new Component\BreadcrumbComponent($currentNavigationItem);
-                echo $breadcrumb;
+        <?php
+        global $currentNavigationItem;
+        if ($currentNavigationItem) {
+            $breadcrumb = new Component\BreadcrumbComponent($currentNavigationItem);
+            echo $breadcrumb;
 
-                ?>
-                <h1><?php echo $currentNavigationItem->title; ?></h1>
-                <?php
-            }
+            ?>
+            <h1><?php echo $currentNavigationItem->title; ?></h1>
+            <?php
+        }
