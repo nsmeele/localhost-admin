@@ -20,8 +20,11 @@ final class MenuComponent
 
     public function setItems(array $items): MenuComponent
     {
-        $this->items = $items;
-        $this->setItemMap($items);
+        foreach ($items as $item) {
+            if ($item instanceof Item) {
+                $this->addItem($item);
+            }
+        }
         return $this;
     }
 
@@ -29,6 +32,7 @@ final class MenuComponent
     {
         $this->items[]               = $item;
         $this->itemMap[ $item->uri ] = $item;
+        $this->setItemMap($item->children);
         return $this;
     }
 
@@ -37,9 +41,7 @@ final class MenuComponent
         foreach ($items as $item) {
             if ($item instanceof Item) {
                 $this->itemMap[ $item->uri ] = $item;
-                if (! empty($item->children)) {
-                    $this->setItemMap($item->children);
-                }
+                $this->setItemMap($item->children);
             }
         }
         return $this;
