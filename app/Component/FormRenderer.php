@@ -2,21 +2,31 @@
 
 namespace Component;
 
+use Symfony\Component\Form\Extension\Core\Type;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\Form\FormView;
 
 final readonly class FormRenderer implements \Stringable
 {
+    private FormView $formView;
+
     public function __construct(
-        private FormView $formView,
+        private FormInterface $formType,
     ) {
+        $this->formView = $this->formType->createView();
     }
 
-    private function renderLabel(FormView $child) : string
+    private function renderLabel(FormView $child): string
     {
-        return '<label for="'.$child->vars[ 'id' ].'">'.$child->vars[ 'label' ].'</label>';
+        return sprintf(
+            "<div><label class='font-medium' for=\"%s\">%s</label></div>",
+            $child->vars[ 'id' ],
+            $child->vars[ 'label' ]
+        );
     }
 
-    private function renderChoice(FormView $child) : string
+    private function renderSelect(FormView $child): string
     {
         $html        = sprintf("<select id=\"%s\" name=\"%s\">", $child->vars[ 'id' ], $child->vars[ 'full_name' ]);
         $placeholder = $child->vars[ 'placeholder' ] ?? null;
@@ -44,17 +54,49 @@ final readonly class FormRenderer implements \Stringable
         return $html;
     }
 
-    private function renderInput(FormView $child) : string
+    private function renderInput(FormView $child): string
     {
-        return '<input type="'.$child->vars[ 'block_prefixes' ][ 1 ].'" id="'.$child->vars[ 'id' ].'" name="'.$child->vars[ 'full_name' ].'" value="'.htmlspecialchars(
+        return sprintf(
+            "<input type=\"%s\" id=\"%s\" name=\"%s\" value=\"%s\">",
+            $child->vars[ 'block_prefixes' ][ 1 ],
+            $child->vars[ 'id' ],
+            $child->vars[ 'full_name' ],
+            htmlspecialchars(
                 $child->vars[ 'value' ] ?? ''
-            ).'">';
+            )
+        );
     }
 
-    private function renderWidget(FormView $child) : string
+    private function renderButton(FormView $child): string
     {
-        return match ($child->vars[ 'block_prefixes' ][ 1 ]) {
-            'textarea' => sprintf(
+        return sprintf(
+            '<button type="%s" id="%s" name="%s">%s</button>',
+            $child->vars[ 'block_prefixes' ][ 1 ],
+            $child->vars[ 'id' ],
+            $child->vars[ 'full_name' ],
+            htmlspecialchars($child->vars[ 'label' ] ?? '')
+        );
+    }
+
+    private function getFieldType(string $name): FormTypeInterface
+    {
+        if (! $this->formType->has($name)) {
+            throw new \InvalidArgumentException("Field '$name' does not exist.");
+        }
+
+        return $this->formType->get($name)
+            ->getConfig()
+            ->getType()
+            ->getInnerType();
+    }
+
+    private function renderWidget(
+        FormView $child,
+        FormTypeInterface $type,
+    ): string {
+        $innerTypeClass = get_class($type);
+        return match ($innerTypeClass) {
+            Type\TextareaType::class => sprintf(
                 "<textarea id=\"%s\" name=\"%s\">%s</textarea>",
                 $child->vars[ 'id' ],
                 $child->vars[ 'full_name' ],
@@ -62,32 +104,40 @@ final readonly class FormRenderer implements \Stringable
                     $child->vars[ 'value' ]
                 )
             ),
-            'choice' => $this->renderChoice($child),
+            Type\EnumType::class, Type\ChoiceType::class => $this->renderSelect($child),
+            Type\ButtonType::class, Type\SubmitType::class => $this->renderButton($child),
             default => $this->renderInput($child),
         };
     }
 
-    private function formStart(FormView $formView) : string
+    private function formStart(FormView $formView): string
     {
         $action = $formView->vars[ 'action' ] ?? '';
         $method = strtoupper($formView->vars[ 'method' ] ?? 'POST');
-        return sprintf('<form action="%s" method="%s">', htmlspecialchars($action), htmlspecialchars($method));
+        return sprintf('<form action="%s" method="%s"><div class="flex flex-col gap-2">', htmlspecialchars($action), htmlspecialchars($method));
     }
 
-    private function formEnd() : string
+    private function formEnd(): string
     {
-        return '</form>';
+        return '</div></form>';
     }
 
-    public function __toString() : string
+    public function __toString(): string
     {
         $html = $this->formStart($this->formView);
         foreach ($this->formView->children as $child) {
             $html .= '<div>';
-            $html .= $this->renderLabel($child).'<br>';
-            $html .= $this->renderWidget($child);
+            $type = $this->getFieldType($child->vars[ 'name' ]);
+            if (
+                $type instanceof Type\HiddenType === false
+                && $type instanceof Type\ButtonType === false
+                && $type instanceof Type\SubmitType === false
+            ) {
+                $html .= $this->renderLabel($child);
+            }
+            $html .= $this->renderWidget($child, $type);
             foreach ($child->vars[ 'errors' ] ?? [] as $error) {
-                $html .= '<span style="color:red;">'.$error->getMessage().'</span><br>';
+                $html .= '<div class="text-red-500">' . $error->getMessage() . '</div>';
             }
             $html .= '</div>';
         }

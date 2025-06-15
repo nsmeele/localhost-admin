@@ -31,13 +31,4 @@ enum ProjectType : string
             self::SYMFONY_6 => 'Symfony 6 + ViteJS + TailwindCSS',
         };
     }
-
-    public static function getChoices(): array
-    {
-        return array_reduce(
-            self::cases(),
-            fn(array $choices, self $type) => $choices + [$type->value => $type->getLabel()],
-            []
-        );
-    }
 }

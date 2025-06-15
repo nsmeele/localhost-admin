@@ -10,19 +10,30 @@ $formError = null;
 
 $form = $formFactory->create(\Form\ProjectCreateForm::class);
 $form->handleRequest($request);
-$formRenderer = new \Component\FormRenderer($form->createView());
+$formRenderer = new \Component\FormRenderer($form);
 
 if ($form->isSubmitted() && $form->isValid()) {
     $data = $form->getData();
 
     try {
         $projectTypeHandler = Resolver::fromType($data[ 'type' ]);
-        $projectTypeHandler->handle($data[ 'name' ], $projectService->getProjectPath());
+        $targetPath = $projectService->getProjectPath();
+        if (!empty($data['parent'])) {
+            $targetPath .= '/' . $data['parent'];
+        }
+
+        if (!is_dir($targetPath)) {
+            throw new \RuntimeException('Target directory does not exist: ' . $targetPath);
+        }
+
+        $projectTypeHandler->handle($data[ 'name' ], $targetPath);
         header('Location: /projects');
         exit;
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         $formError = 'Error creating project: ' . $e->getMessage();
     }
+} elseif ($form->isSubmitted()) {
+    $formError = 'Please correct the errors in the form.';
 }
 
 ?>
@@ -31,7 +42,7 @@ if ($form->isSubmitted() && $form->isValid()) {
     <div class="w-full max-w-[50%]">
         <?php
         if ($formError) {
-            echo '<div class="bg-red-300 p-3 text-red-800 rounded-lg">' . $formError . '</div>';
+            echo '<div class="bg-red-300 font-medium mb-3 py-2 px-3 shadow-sm text-red-800 rounded-lg">' . $formError . '</div>';
         }
         echo $formRenderer;
         ?>

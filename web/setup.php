@@ -1,18 +1,53 @@
 <?php
 
 use Component\MenuComponent;
+use Routing\AttributeRouteLoader;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationExtension;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
+use Symfony\Component\HttpKernel\Controller\ControllerResolver;
+use Symfony\Component\HttpKernel\HttpKernel;
+use Symfony\Component\Routing\Loader\AttributeDirectoryLoader;
+use Symfony\Component\Routing\Matcher\UrlMatcher;
+use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Validator\Validation;
 
 define("ROOT_PATH", realpath(dirname(__FILE__, 2)));
 
-require_once ROOT_PATH . '/vendor/autoload.php';
+require_once ROOT_PATH.'/vendor/autoload.php';
 
 global $request, $navigation, $currentNavigationItem, $formFactory;
 
-$request     = Request::createFromGlobals();
+$controllerPath = ROOT_PATH . '/app/Controller';
+$loader = new AttributeDirectoryLoader(
+    new FileLocator($controllerPath),
+    new AttributeRouteLoader()
+);
+$routes = $loader->load($controllerPath);
+
+$request = Request::createFromGlobals();
+
+$context = new RequestContext();
+$context->fromRequest($request);
+
+$matcher    = new UrlMatcher($routes, $context);
+$attributes = $matcher->match($request->getPathInfo());
+$request->attributes->add($attributes);
+
+$kernel = new HttpKernel(
+    new EventDispatcher(),
+    new ControllerResolver(),
+    null,
+    new ArgumentResolver()
+);
+
+$response = $kernel->handle($request);
+$response->send();
+$kernel->terminate($request, $response);
+
 $validator   = Validation::createValidator();
 $formFactory = Forms::createFormFactoryBuilder()
     ->addExtension(new HttpFoundationExtension())
@@ -21,7 +56,7 @@ $formFactory = Forms::createFormFactoryBuilder()
 
 define("HOME_URL", $request->getSchemeAndHttpHost());
 
-$basePath              = realpath(ROOT_PATH . '/templates/pages');
+$basePath              = realpath(ROOT_PATH.'/templates/pages');
 $menuService           = new \Service\MenuService($basePath);
 $navigation            = new MenuComponent()->setItems($menuService->getItemsFromPath());
 $currentNavigationItem = $navigation->getItemByUri($request->getRequestUri());

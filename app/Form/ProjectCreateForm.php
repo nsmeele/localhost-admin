@@ -22,13 +22,16 @@ class ProjectCreateForm extends AbstractType
                 ],
             ])
             ->add('parent', Type\ChoiceType::class, [
-                'label'       => 'Parent Project',
-                'choices'     => $this->getParentProjects(),
-                'placeholder' => 'Select a parent project',
+                'label'        => 'Parent Project',
+                'choices'      => $this->getParentProjects(),
+                'placeholder'  => 'Select a parent project',
             ])
             ->add('type', Type\EnumType::class, [
                 'label'       => 'Project Type',
                 'class'       => ProjectType::class,
+                'choice_label' => function (ProjectType $projectType): string {
+                    return $projectType->getLabel(); // Display the directory name
+                },
                 'placeholder' => 'Select a project type',
                 'multiple'    => false,
                 'constraints' => [
@@ -37,11 +40,10 @@ class ProjectCreateForm extends AbstractType
             ])
             ->add('submit', Type\SubmitType::class, [
                 'label' => 'Create Project',
-            ])
-        ;
+            ]);
     }
 
-    private function getParentProjects() : array
+    private function getParentProjects(): array
     {
         $projectService = new ProjectService();
         $projectPath    = $projectService->getProjectPath();
@@ -53,11 +55,10 @@ class ProjectCreateForm extends AbstractType
             ->depth('== 0');
 
         $options = [];
-        foreach($projects as $project) {
-            $options[$project->getRelativePathname()] = $project->getRelativePathname();
+        foreach ($projects as $project) {
+            $options[ $project->getRelativePathname() ] = $project->getRelativePathname();
         }
 
         return $options; // Only top-level directories
     }
-
 }
