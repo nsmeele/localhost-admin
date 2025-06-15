@@ -15,8 +15,7 @@
 
         <nav>
             <?php
-            global $navigation;
-            echo new \Component\Menu\Renderer($navigation);
+            echo $navigation;
             ?>
         </nav>
 
@@ -32,12 +31,6 @@
     <main class="w-full p-8">
 
         <?php
-        global $currentNavigationItem;
-        if ($currentNavigationItem) {
-            $breadcrumb = new Component\BreadcrumbComponent($currentNavigationItem);
-            echo $breadcrumb;
-
-            ?>
-            <h1><?php echo $currentNavigationItem->title; ?></h1>
-            <?php
+        if ($title) {
+            echo '<h1 class="text-2xl font-bold mb-4">' . htmlspecialchars($title) . '</h1>';
         }
