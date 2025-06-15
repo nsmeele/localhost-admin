@@ -1,15 +1,20 @@
 <?php
 
 use Component\MenuComponent;
+use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationExtension;
+use Symfony\Component\Form\Forms;
 use Symfony\Component\HttpFoundation\Request;
 
 define("ROOT_PATH", realpath(dirname(__FILE__, 2)));
 
 require_once ROOT_PATH . '/vendor/autoload.php';
 
-global $request, $navigation, $currentNavigationItem;
+global $request, $navigation, $currentNavigationItem, $formFactory;
 
-$request = Request::createFromGlobals();
+$request     = Request::createFromGlobals();
+$formFactory = Forms::createFormFactoryBuilder()
+    ->addExtension(new HttpFoundationExtension())
+    ->getFormFactory();
 
 define("HOME_URL", $request->getSchemeAndHttpHost());
 
