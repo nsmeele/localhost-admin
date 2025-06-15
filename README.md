@@ -1,65 +1,65 @@
 # Localhost Admin
 
-_Een minimale PHP-tool om eenvoudig nieuwe Composer-projecten aan te maken via je browser op je lokale machine._
+_A minimal PHP tool to quickly scaffold new Composer-based projects via your browser on your local machine._
 
-## 🔍 Over dit project
+## 🔍 About this project
 
-**Localhost Admin** is een sessieloze, database-loze PHP frontend voor het starten van nieuwe Composer-projecten, zoals:
+**Localhost Admin** is a stateless PHP frontend for bootstrapping new Composer projects like:
 
 - Symfony 7
 - Drupal
 - WordPress
-- (of wat je zelf maar toevoegt)
+- (or anything else you add yourself)
 
-⚠️ Momenteel is **alleen 'empty-directory'** functioneel geïmplementeerd. De overige types zijn placeholders voor toekomstige integratie.
+⚠️ Currently, only **'empty-directory'** is functionally implemented. Other project types are placeholders for future integration.
 
-Het draait lokaal op je PHP-server en geeft je een simpel overzicht van beschikbare installatiemogelijkheden via Composer.
+It runs locally on your PHP server and provides a simple UI to select and generate projects.
 
-## ⚙️ Systeemvereisten
+## ⚙️ Requirements
 
-- PHP **8.4** of nieuwer
-- Composer (globaal geïnstalleerd)
-- Webserver (bijv. PHP’s built-in server, Apache/Nginx, of bij voorkeur DDEV)
+- PHP **8.4** or higher
+- Composer (installed globally)
+- Web server (e.g. PHP built-in server, Apache/Nginx, or preferably DDEV)
 
-## 🚀 Installatie
+## 🚀 Installation
 
-### Met DDEV (aanbevolen)
+### Using DDEV (recommended)
 
-1. Installeer [DDEV](https://ddev.readthedocs.io/en/stable/)
-2. Clone deze repository:
+1. Install [DDEV](https://ddev.readthedocs.io/en/stable/)
+2. Clone this repository:
 
 ```bash
 git clone https://github.com/nsmeele/localhost-admin.git
 cd localhost-admin
-ddev config --project-type=php --docroot=. --create-docroot
-ddev start && ddev launch
+ddev start && ddev composer install && ddev launch
 ```
 
-### Alternatief: PHP built-in server
+### Alternative: PHP built-in server
 
 ```bash
 git clone https://github.com/nsmeele/localhost-admin.git
 cd localhost-admin
+composer install
 php -S localhost:8000
 ```
 
-Open in je browser: [http://localhost:8000](http://localhost:8000)
+Open your browser at: [http://localhost:8000](http://localhost:8000)
 
-## 🛠 Gebruik
+## 🛠 Usage
 
-1. Selecteer een projecttype (bijvoorbeeld Symfony).
-2. Geef de projectnaam op.
-3. De tool voert `composer create-project` uit in de juiste map.
-4. Klaar. Open de map in je IDE of browser.
+1. Select a project type (e.g. Symfony).
+2. Provide a project name.
+3. The tool will run `composer create-project` in the designated folder.
+4. Done. Open the folder in your IDE or browser.
 
-Momenteel is dit een statische tool zonder login, database of sessies. Eenvoud voorop.
+The tool is currently fully static — no login, no session, no database. Simplicity first.
 
-## 📦 Ondersteunde projecttypes
+## 📦 Supported Project Types
 
-De volgende projecttypes worden getoond in de interface:
+These project types are selectable in the UI:
 
-- ✅ Empty directory *(functioneel)*
-- 🚧 Empty file *(nog niet geïmplementeerd)*
+- ✅ Empty directory *(functional)*
+- 🚧 Empty file *(not yet implemented)*
 - 🚧 Symfony 6 + ViteJS + TailwindCSS
 - 🚧 Symfony 7 + ViteJS + TailwindCSS
 - 🚧 Symfony LTS + ViteJS + TailwindCSS
@@ -69,12 +69,12 @@ De volgende projecttypes worden getoond in de interface:
 - 🚧 Drupal CMS
 - 🚧 WordPress
 
-Onder de motorkap gedefinieerd via een `ProjectType` enum.
+Internally defined via a `ProjectType` enum.
 
-## 📄 Licentie
+## 📄 License
 
-MIT-licentie – gebruik het, breek het, leer ervan.
+MIT License – use it, break it, learn from it.
 
-## 🙋‍♂️ Waarom?
+## 🙋‍♂️ Why?
 
-Omdat `localhost` vaak een rommeltje wordt. Deze tool is een poging tot wat orde in de chaos – niets meer, niets minder.
+Because `localhost` tends to become a mess. This tool is a lightweight attempt at restoring order — nothing more, nothing less.
