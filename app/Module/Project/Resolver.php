@@ -9,7 +9,7 @@ final readonly class Resolver
         return match ($projectType) {
             ProjectType::EMPTY_DIRECTORY => new Strategy\EmptyDirectoryStrategy(),
             default => throw new \InvalidArgumentException(
-                sprintf('Project type "%s" is not supported.', $projectType->value)
+                sprintf('Project type "%s" is not supported.', $projectType->getLabel())
             ),
         };
     }
