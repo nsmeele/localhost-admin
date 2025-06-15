@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/dist/css/app.css" rel="stylesheet">
 
-    <title>My Localhost Admin</title>
+    <title>Localhost Manager</title>
 
 </head>
 <body>
 
 <div id="page-wrapper" class="flex">
-    <div id="sidebar" class="bg-gray-900 text-gray-100 lg:min-h-screen min-w-[240px] p-8 flex column relative">
+    <div id="sidebar" class="bg-gray-900 text-gray-100 lg:min-h-screen min-w-[240px] p-8 flex flex-col">
 
         <nav>
             <?php
