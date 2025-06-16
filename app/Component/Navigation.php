@@ -4,12 +4,14 @@ namespace Component;
 
 use Component\Navigation\Item;
 
-readonly class Navigation implements \Stringable
+final class Navigation implements \Stringable
 {
     /**
      * @var Item[] $items
      */
-    private array $items;
+    private readonly array $items;
+
+    private array $itemMapByRouteName = [];
 
     public function __construct(array $menu)
     {
@@ -18,24 +20,48 @@ readonly class Navigation implements \Stringable
 
     private function resolveExtractedMenuItemsToItems(array $extractedMenuItems): array
     {
-        $items = [];
+        $items        = [];
+        $lazyChildren = [];
+
         foreach ($extractedMenuItems as $item) {
-            $items[ $item[ 'path' ] ] = new Item(
+            $navItem = new Item(
                 url: HOME_URL . $item[ 'path' ],
                 uri: $item[ 'path' ],
                 menuLabel: $item[ 'label' ],
                 routeName: $item[ 'name' ] ?? '',
-                icon: $item[ 'icon' ] ?? 'chevron-right',
-                parent: $item[ 'parent' ] ?? null,
+                icon: $item[ 'icon' ] ?? null,
             );
+
+            $this->itemMapByRouteName[ $item[ 'name' ] ] = $navItem;
+
+            $parentItem = $this->itemMapByRouteName[ $item[ 'parent' ] ] ?? null;
+
+            if (! empty($item[ 'parent' ]) && ! isset($parentItem)) {
+                $lazyChildren[] = [
+                    'item'             => $navItem,
+                    'parentIdentifier' => $item[ 'parent' ],
+                ];
+                continue;
+            }
+
+            if ($parentItem) {
+                $parentItem->addChild($navItem);
+            } else {
+                $items[ $item[ 'name' ] ?? '' ] = $navItem;
+            }
         }
+
+        $this->resolveLazyChildren($lazyChildren);
+
         return $items;
     }
 
-    public function getCurrentRouteName(): string
+    private function resolveLazyChildren(array $lazyChildren): void
     {
-        global $request;
-        return $request->get('_route') ?? '';
+        foreach ($lazyChildren as $child) {
+            $parentIdentifier = $child[ 'parentIdentifier' ];
+            $this->itemMapByRouteName[ $parentIdentifier ]?->addChild($child[ 'item' ]);
+        }
     }
 
     private function getContainerFormat(): string
@@ -45,21 +71,47 @@ readonly class Navigation implements \Stringable
 
     public function getMenuItem(string $path): ?Item
     {
-        return $this->items[ $path ] ?? null;
+        return $this->itemMapByRouteName[ $path ] ?? null;
     }
 
-    public function __toString(): string
+
+    private function getLevelHtml(
+        Item $item,
+        int $depth = 0
+    ): string {
+        return sprintf(
+            '<li class="%s">%s</li>',
+            $item->isCurrent() || $item->hasActiveChild() ? 'active' : '',
+            $item . $this->getContainerHtml($item->children, $depth + 1)
+        );
+    }
+
+    /**
+     * @param  Item[]  $items
+     * @param  int  $depth
+     * @return string
+     */
+    private function getContainerHtml(array $items, int $depth = 0): string
     {
+        if (empty($items)) {
+            return '';
+        }
+
         $html = '';
 
-        foreach ($this->items as $item) {
-            $html .= sprintf("<li class=\"%s\">%s</li>", $item->isCurrent() ? 'active' : '', $item);
+        foreach ($items as $item) {
+            $html .= $this->getLevelHtml($item, $depth);
         }
 
         return sprintf(
             $this->getContainerFormat(),
-            0,
+            $depth,
             $html
         );
+    }
+
+    public function __toString(): string
+    {
+        return $this->getContainerHtml($this->items);
     }
 }

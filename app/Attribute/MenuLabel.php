@@ -7,7 +7,8 @@ final readonly class MenuLabel
 {
     public function __construct(
         public string $label,
-        public ?string $icon = 'chevron-right',
+        public ?string $parent = null,
+        public ?string $icon = null,
     ) {
     }
 }

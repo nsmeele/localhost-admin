@@ -32,5 +32,5 @@
 
         <?php
         if ($title) {
-            echo '<h1 class="text-2xl font-bold mb-4">' . htmlspecialchars($title) . '</h1>';
+            echo '<h1 class="text-4xl font-extrabold mb-6">' . htmlspecialchars($title) . '</h1>';
         }

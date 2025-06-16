@@ -4,6 +4,6 @@ namespace Form;
 
 use Symfony\Component\Form\AbstractType;
 
-class ProjectFilterForm extends AbstractType
+final class ProjectFilterForm extends AbstractType
 {
 }
