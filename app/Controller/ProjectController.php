@@ -47,19 +47,17 @@ class ProjectController extends AbstractController
         $projects = $this->projectService->listProjects(excludeFiles: true);
 
         if ($projects->hasResults()) { ?>
-            <div class="grid md:grid-cols-2 xl:grid-cols-3">
+            <div class="grid md:grid-cols-2 xl:grid-cols-3 mt-8 gap-4">
                 <?php
                 foreach ($projects as $project) {
                     ?>
-                    <div class="border-top p-2 flex items-center">
+                    <div class="p-4 flex items-center bg-gray-50 hover:bg-gray-200 rounded-lg">
                         <div>
-                            <label for="<?php
-                            echo $project->getRelativePathname(); ?>-actions" class="font-bold text-lg">
-                                <i class="fa-solid fa-folder"></i><?php
-                                echo $project->getRelativePathname(); ?></label>
+                            <label for="<?php echo $project->getRelativePathname(); ?>-actions" class="font-medium text-lg">
+                                <i class="fa-solid fa-folder"></i><?php echo $project->getRelativePathname(); ?>
+                            </label>
                         </div>
-                        <select class="ms-auto form-select form-select-sm w-auto" id="<?php
-                        echo $project->getRelativePathname(); ?>-actions">
+                        <select class="ms-auto form-select form-select-sm w-auto" id="<?php echo $project->getRelativePathname(); ?>-actions">
                             <option value="">- Select option-</option>
                             <option value="edit">Edit</option>
                             <option value="delete">Delete</option>
@@ -84,7 +82,7 @@ class ProjectController extends AbstractController
     }
 
     #[Route('/new', name: '_new')]
-    #[MenuLabel('New project', parent: 'projects_index', icon: 'plus')]
+    #[MenuLabel('New project', parent: 'projects_index')]
     public function new(): Response
     {
         global $request, $formFactory;

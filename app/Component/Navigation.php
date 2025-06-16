@@ -11,7 +11,7 @@ final class Navigation implements \Stringable
      */
     private readonly array $items;
 
-    private array $itemsByRouteName = [];
+    private array $itemMapByRouteName = [];
 
     public function __construct(array $menu)
     {
@@ -29,12 +29,14 @@ final class Navigation implements \Stringable
                 uri: $item[ 'path' ],
                 menuLabel: $item[ 'label' ],
                 routeName: $item[ 'name' ] ?? '',
-                icon: $item[ 'icon' ] ?? 'chevron-right',
+                icon: $item[ 'icon' ] ?? null,
             );
 
-            $this->itemsByRouteName[ $item[ 'name' ] ] = $navItem;
+            $this->itemMapByRouteName[ $item[ 'name' ] ] = $navItem;
 
-            if (! empty($item[ 'parent' ]) && ! isset($items[ $item[ 'parent' ] ])) {
+            $parentItem = $this->itemMapByRouteName[ $item[ 'parent' ] ] ?? null;
+
+            if (! empty($item[ 'parent' ]) && ! isset($parentItem)) {
                 $lazyChildren[] = [
                     'item'             => $navItem,
                     'parentIdentifier' => $item[ 'parent' ],
@@ -42,31 +44,24 @@ final class Navigation implements \Stringable
                 continue;
             }
 
-            if (! empty($item[ 'parent' ]) && isset($items[ $item[ 'parent' ] ])) {
-                $parentItem = $items[ $item[ 'parent' ] ];
+            if ($parentItem) {
                 $parentItem->addChild($navItem);
             } else {
                 $items[ $item[ 'name' ] ?? '' ] = $navItem;
             }
         }
 
-        foreach ($lazyChildren as $child) {
-            $parentIdentifier = $child[ 'parentIdentifier' ];
-
-            if (isset($items[ $parentIdentifier ])) {
-                $items[ $parentIdentifier ]->addChild($child[ 'item' ]);
-            } else {
-                throw new \RuntimeException(
-                    sprintf(
-                        'Parent item "%s" not found for child item "%s".',
-                        $parentIdentifier,
-                        $child[ 'item' ]->getMenuLabel(),
-                    )
-                );
-            }
-        }
+        $this->resolveLazyChildren($lazyChildren);
 
         return $items;
+    }
+
+    private function resolveLazyChildren(array $lazyChildren): void
+    {
+        foreach ($lazyChildren as $child) {
+            $parentIdentifier = $child[ 'parentIdentifier' ];
+            $this->itemMapByRouteName[ $parentIdentifier ]?->addChild($child[ 'item' ]);
+        }
     }
 
     private function getContainerFormat(): string
@@ -74,49 +69,49 @@ final class Navigation implements \Stringable
         return '<ul data-depth="%d">%s</ul>';
     }
 
-    public function getMenuItem(string $path) : ?Item
+    public function getMenuItem(string $path): ?Item
     {
-        return $this->itemsByRouteName[ $path ] ?? null;
+        return $this->itemMapByRouteName[ $path ] ?? null;
     }
+
 
     private function getLevelHtml(
         Item $item,
         int $depth = 0
     ): string {
-        $children = null;
-        if (! empty($item->children)) {
-            $childHtml = '';
-            foreach ($item->children as $child) {
-                $childHtml .= $this->getLevelHtml($child, $depth + 1);
-            }
-            $children = sprintf(
-                $this->getContainerFormat(),
-                $depth + 1,
-                $childHtml
-            );
+        return sprintf(
+            '<li class="%s">%s</li>',
+            $item->isCurrent() || $item->hasActiveChild() ? 'active' : '',
+            $item . $this->getContainerHtml($item->children, $depth + 1)
+        );
+    }
+
+    /**
+     * @param  Item[]  $items
+     * @param  int  $depth
+     * @return string
+     */
+    private function getContainerHtml(array $items, int $depth = 0): string
+    {
+        if (empty($items)) {
+            return '';
+        }
+
+        $html = '';
+
+        foreach ($items as $item) {
+            $html .= $this->getLevelHtml($item, $depth);
         }
 
         return sprintf(
-            '<li class="%s">%s</li>',
-            $item->isCurrent() ? 'active' : '',
-            $item . ($children ?? '')
+            $this->getContainerFormat(),
+            $depth,
+            $html
         );
     }
 
     public function __toString(): string
     {
-        $html = '';
-
-        foreach ($this->items as $item) {
-            if ($item->parent === null) {
-                $html .= $this->getLevelHtml($item);
-            }
-        }
-
-        return sprintf(
-            $this->getContainerFormat(),
-            0,
-            $html
-        );
+        return $this->getContainerHtml($this->items);
     }
 }

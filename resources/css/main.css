@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "flowbite/src/themes/default";
+
 @plugin "flowbite/plugin";
 
 
@@ -21,6 +22,10 @@
 nav {
     li {
         @apply pt-1.5;
+
+        a {
+            @apply font-medium;
+        }
     }
 
     li.active {
@@ -43,6 +48,6 @@ nav {
     }
 
     button, .button {
-        @apply bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 cursor-pointer;
+        @apply font-bold bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 cursor-pointer;
     }
 }

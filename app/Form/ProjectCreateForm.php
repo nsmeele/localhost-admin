@@ -8,9 +8,9 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints;
 
-class ProjectCreateForm extends AbstractType
+final class ProjectCreateForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -18,7 +18,7 @@ class ProjectCreateForm extends AbstractType
             ->add('name', Type\TextType::class, [
                 'label'       => 'Project Name',
                 'constraints' => [
-                    new NotBlank(['message' => 'Name is required.']),
+                    new Constraints\NotBlank(['message' => 'Name is required.']),
                 ],
             ])
             ->add('parent', Type\ChoiceType::class, [
@@ -27,15 +27,13 @@ class ProjectCreateForm extends AbstractType
                 'placeholder'  => 'Select a parent project',
             ])
             ->add('type', Type\EnumType::class, [
-                'label'       => 'Project Type',
-                'class'       => ProjectType::class,
-                'choice_label' => function (ProjectType $projectType): string {
-                    return $projectType->getLabel(); // Display the directory name
-                },
-                'placeholder' => 'Select a project type',
-                'multiple'    => false,
-                'constraints' => [
-                    new NotBlank(['message' => 'Type is required.']),
+                'label'        => 'Project Type',
+                'class'        => ProjectType::class,
+                'choice_label' => static fn(ProjectType $projectType): string => $projectType->getLabel(),
+                'placeholder'  => 'Select a project type',
+                'multiple'     => false,
+                'constraints'  => [
+                    new Constraints\NotBlank(['message' => 'Type is required.']),
                 ],
             ])
             ->add('submit', Type\SubmitType::class, [
@@ -59,6 +57,6 @@ class ProjectCreateForm extends AbstractType
             $options[ $project->getRelativePathname() ] = $project->getRelativePathname();
         }
 
-        return $options; // Only top-level directories
+        return $options;
     }
 }

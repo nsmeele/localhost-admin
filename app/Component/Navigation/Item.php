@@ -9,7 +9,7 @@ final class Item implements \Stringable
         private(set) readonly string $uri,
         private readonly string $menuLabel,
         private(set) readonly string $routeName,
-        private readonly string $icon = 'chevron-right',
+        private readonly ?string $icon = null,
         private(set) ?Item $parent = null,
         private(set) array $children = [],
     ) {
@@ -19,6 +19,17 @@ final class Item implements \Stringable
     {
         global $request;
         return $request->get('_route') === $this->routeName;
+    }
+
+    public function hasActiveChild(): bool
+    {
+        foreach ($this->children as $child) {
+            if ($child->isCurrent() || $child->hasActiveChild()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function addChild(Item $child): Item
@@ -33,18 +44,22 @@ final class Item implements \Stringable
         return $this->menuLabel;
     }
 
-    public function __toString(): string
+    private function getIconHtml(): string
     {
-        $iconHtml  = $this->icon ? sprintf(
+        return $this->icon ? sprintf(
             '<span class="mr-1.5"><i class="fa-solid fa-fw fa-%s"></i></span>',
             htmlspecialchars($this->icon)
         ) : '';
+    }
+
+    public function __toString(): string
+    {
         $labelHtml = htmlspecialchars($this->menuLabel);
 
         return sprintf(
             '<a href="%s">%s</a>',
             htmlspecialchars($this->url),
-            $iconHtml . $labelHtml
+            $this->getIconHtml() . $labelHtml
         );
     }
 }
