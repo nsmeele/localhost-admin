@@ -15,22 +15,23 @@ class Extractor
             $defaults = $route->getDefaults();
 
             // Controller moet array zijn: [class, method]
-            if (!isset($defaults['_controller']) || !is_array($defaults['_controller'])) {
+            if (! isset($defaults[ '_controller' ]) || ! is_array($defaults[ '_controller' ])) {
                 continue;
             }
 
-            [$class, $method] = $defaults['_controller'];
+            [$class, $method] = $defaults[ '_controller' ];
 
             $meta = $this->getMenuMetadata($class, $method);
             if ($meta === null) {
                 continue;
             }
 
-            $navigation[] = [
-                'name' => $name,
-                'path' => $route->getPath(),
-                'label' => $meta['label'],
-                'icon' => $meta['icon'],
+            $navigation[$name] = [
+                'name'   => $name,
+                'path'   => $route->getPath(),
+                'label'  => $meta[ 'label' ],
+                'icon'   => $meta[ 'icon' ],
+                'parent' => $meta[ 'parent' ] ?? null,
             ];
         }
 
@@ -40,18 +41,19 @@ class Extractor
     private function getMenuMetadata(string $class, string $method): ?array
     {
         $methodReflection = new \ReflectionMethod($class, $method);
-        $attrs = $methodReflection->getAttributes(MenuLabel::class);
+        $attrs            = $methodReflection->getAttributes(MenuLabel::class);
 
-        if (!$attrs) {
+        if (! $attrs) {
             return null;
         }
 
         /** @var MenuLabel $instance */
-        $instance = $attrs[0]->newInstance();
+        $instance = $attrs[ 0 ]->newInstance();
 
         return [
-            'label' => $instance->label,
-            'icon' => $instance->icon,
+            'label'  => $instance->label,
+            'icon'   => $instance->icon,
+            'parent' => $instance->parent,
         ];
     }
 }

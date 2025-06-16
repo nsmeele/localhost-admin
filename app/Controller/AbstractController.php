@@ -33,7 +33,7 @@ abstract class AbstractController
         extract(array_merge([
             'navigation' => $this->routeNavigation,
             'title'      => $this->routeNavigation
-                    ->getMenuItem($this->request->getRequestUri())
+                    ->getMenuItem($this->request->get('_route'))
                     ?->getMenuLabel() ?? 'No title provided',
         ], $attr));
 

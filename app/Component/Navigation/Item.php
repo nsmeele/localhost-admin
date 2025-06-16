@@ -2,15 +2,16 @@
 
 namespace Component\Navigation;
 
-final readonly class Item implements \Stringable
+final class Item implements \Stringable
 {
     public function __construct(
-        private string $url,
-        private string $uri,
-        private string $menuLabel,
-        private string $routeName,
-        private string $icon = 'chevron-right',
-        private ?Item $parent = null,
+        private readonly string $url,
+        private(set) readonly string $uri,
+        private readonly string $menuLabel,
+        private(set) readonly string $routeName,
+        private readonly string $icon = 'chevron-right',
+        private(set) ?Item $parent = null,
+        private(set) array $children = [],
     ) {
     }
 
@@ -18,6 +19,13 @@ final readonly class Item implements \Stringable
     {
         global $request;
         return $request->get('_route') === $this->routeName;
+    }
+
+    public function addChild(Item $child): Item
+    {
+        $child->parent = $this;
+        $this->children[] = $child;
+        return $this;
     }
 
     public function getMenuLabel(): string
