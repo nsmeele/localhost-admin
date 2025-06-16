@@ -50,24 +50,26 @@ class ProjectController extends AbstractController
             <div class="grid md:grid-cols-2 xl:grid-cols-3 mt-8 gap-4">
                 <?php
                 foreach ($projects as $project) {
+                    $projectNameParts = explode('/', $project->getRelativePathname());
+                    $actionUrlParams  = array_filter([
+                        'namespace' => trim($projectNameParts[ 0 ] ?? '', '/'),
+                        'project'   => trim($projectNameParts[ 1 ] ?? '', '/')
+                    ]);
+
+                    $editUrl   = $this->urlGenerator->generate('projects_edit', $actionUrlParams);
+                    $removeUrl = $this->urlGenerator->generate('projects_remove', $actionUrlParams);
                     ?>
                     <div class="p-4 flex items-center bg-gray-50 hover:bg-gray-200 rounded-lg">
                         <div>
                             <label for="<?php echo $project->getRelativePathname(); ?>-actions" class="font-medium text-lg">
-                                <i class="fa-solid fa-folder"></i><?php echo $project->getRelativePathname(); ?>
+                                <span class="mr-2"><i class="fa-solid fa-folder"></i></span>
+                                <?php echo $project->getRelativePathname(); ?>
                             </label>
                         </div>
-                        <select class="ms-auto form-select form-select-sm w-auto" id="<?php echo $project->getRelativePathname(); ?>-actions">
-                            <option value="">- Select option-</option>
-                            <option value="edit">Edit</option>
-                            <option value="delete">Delete</option>
-
-                            <optgroup label="Symfony">
-                                <option value="">Run command</option>
-                                <option value="">Create migration file</option>
-                                <option value="">Run migration</option>
-                            </optgroup>
-                        </select>
+                        <div class="ml-auto">
+                            <a href="<?php echo $editUrl; ?>"><i class="fa-solid fa-edit"></i></a>
+                            <a href="<?php echo $removeUrl; ?>"><i class="fa-solid fa-trash-alt"></i></a>
+                        </div>
                     </div>
                     <?php
                 }
@@ -109,7 +111,7 @@ class ProjectController extends AbstractController
 
                 $projectTypeHandler->handle($data[ 'name' ], $targetPath);
 
-                return new RedirectResponse($this->urlGenerator->generate('projects'));
+                return new RedirectResponse($this->urlGenerator->generate('projects_index'));
             } catch (\Throwable $e) {
                 $formError = 'Error creating project: ' . $e->getMessage();
             }
@@ -132,28 +134,29 @@ class ProjectController extends AbstractController
         return $this->renderWithLayout($html);
     }
 
-    #[Route('/{id}/edit', name: '_edit')]
-    public function edit(string $id): Response
+    #[Route('/{namespace}/{project}/edit', name: '_edit')]
+    #[Route('/{namespace}/edit', name: '_edit')]
+    public function edit(string $namespace, ?string $project = null): Response
     {
         // Logic to edit a project by ID
-        return $this->renderWithLayout("Edit project ID: $id");
+        return $this->renderWithLayout("Edit project $namespace: $namespace", [
+            'title' => 'Edit project: ' . $namespace . ($project ? '/' . $project : ''),
+        ]);
     }
 
-    #[Route('/{id}/remove', name: '_remove')]
-    public function remove(string $id): Response
+    #[Route('/{namespace}/{project}/remove', name: '_remove')]
+    #[Route('/{namespace}/remove', name: '_remove')]
+    public function remove(string $namespace, ?string $project = null): Response
     {
-        global $request;
+        $projectPath = $this->projectService->getProjectPath();
+        $path        = sprintf("%s/%s", $projectPath, $namespace . ($project ? '/' . $project : ''));
 
-        throw new \RuntimeException('This feature is not implemented yet.');
+        $fileSystem = new \Symfony\Component\Filesystem\Filesystem();
+        if ($fileSystem->exists($path)) {
+            $fileSystem->remove($path);
+        }
 
-//        $path = (string)$request->query->get('path');
-//
-//        $fileSystem = new \Symfony\Component\Filesystem\Filesystem();
-//        if ($fileSystem->exists($path)) {
-//            $fileSystem->remove($path);
-//        }
-
-        return new RedirectResponse($this->urlGenerator->generate('projects'));
+        return new RedirectResponse($this->urlGenerator->generate('projects_index'));
     }
 
     #[Route('/{id}', name: '_show')]
