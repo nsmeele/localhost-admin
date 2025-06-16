@@ -111,7 +111,7 @@ class ProjectController extends AbstractController
 
                 $projectTypeHandler->handle($data[ 'name' ], $targetPath);
 
-                return new RedirectResponse($this->urlGenerator->generate('projects'));
+                return new RedirectResponse($this->urlGenerator->generate('projects_index'));
             } catch (\Throwable $e) {
                 $formError = 'Error creating project: ' . $e->getMessage();
             }
@@ -139,25 +139,24 @@ class ProjectController extends AbstractController
     public function edit(string $namespace, ?string $project = null): Response
     {
         // Logic to edit a project by ID
-        return $this->renderWithLayout("Edit project $namespace: $namespace");
+        return $this->renderWithLayout("Edit project $namespace: $namespace", [
+            'title' => 'Edit project: ' . $namespace . ($project ? '/' . $project : ''),
+        ]);
     }
 
     #[Route('/{namespace}/{project}/remove', name: '_remove')]
     #[Route('/{namespace}/remove', name: '_remove')]
     public function remove(string $namespace, ?string $project = null): Response
     {
-        global $request;
+        $projectPath = $this->projectService->getProjectPath();
+        $path        = sprintf("%s/%s", $projectPath, $namespace . ($project ? '/' . $project : ''));
 
-        throw new \RuntimeException('This feature is not implemented yet.');
+        $fileSystem = new \Symfony\Component\Filesystem\Filesystem();
+        if ($fileSystem->exists($path)) {
+            $fileSystem->remove($path);
+        }
 
-//        $path = (string)$request->query->get('path');
-//
-//        $fileSystem = new \Symfony\Component\Filesystem\Filesystem();
-//        if ($fileSystem->exists($path)) {
-//            $fileSystem->remove($path);
-//        }
-
-        return new RedirectResponse($this->urlGenerator->generate('projects'));
+        return new RedirectResponse($this->urlGenerator->generate('projects_index'));
     }
 
     #[Route('/{id}', name: '_show')]
