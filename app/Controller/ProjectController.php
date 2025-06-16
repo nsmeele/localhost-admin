@@ -47,7 +47,7 @@ class ProjectController extends AbstractController
         $projects = $this->projectService->listProjects(excludeFiles: true);
 
         if ($projects->hasResults()) { ?>
-            <div class="grid grid-cols-3">
+            <div class="grid md:grid-cols-2 xl:grid-cols-3">
                 <?php
                 foreach ($projects as $project) {
                     ?>
@@ -84,7 +84,7 @@ class ProjectController extends AbstractController
     }
 
     #[Route('/new', name: '_new')]
-    #[MenuLabel('New project')]
+    #[MenuLabel('New project', parent: 'projects_index', icon: 'plus')]
     public function new(): Response
     {
         global $request, $formFactory;
